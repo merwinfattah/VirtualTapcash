@@ -25,7 +25,7 @@ public class TransactionService {
     public List<Transaction> getAllTransaction() { return TransactionJpaRepository.findAll();
     }
 
-    public Optional<Transaction> getTransactionId(String transactionId) { return TransactionJpaRepository.findById(transactionId);
+    public Optional<Transaction> getTransactionById(String transactionId) { return TransactionJpaRepository.findById(transactionId);
     }
 
     public void deleteTransaction(String transactionId) {
