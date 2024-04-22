@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_transaction")
@@ -50,8 +51,8 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(String transactionId, String type, BigDecimal nominal, Date createdAt, TapcashCard tapcash, TapcashCard rfid) {
-        this.transactionId = transactionId;
+    public Transaction(String type, BigDecimal nominal, Date createdAt, TapcashCard tapcash, TapcashCard rfid) {
+        this.transactionId = UUID.randomUUID().toString();
         this.type = type;
         this.nominal = nominal;
         this.createdAt = createdAt;

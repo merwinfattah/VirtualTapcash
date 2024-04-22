@@ -6,6 +6,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_externalSystemCard")
@@ -34,8 +35,8 @@ public class ExternalSystemCard {
     public ExternalSystemCard() {
     }
 
-    public ExternalSystemCard(String cardId, BigDecimal tapCashBalance, TapcashCard rfid) {
-        this.cardId = cardId;
+    public ExternalSystemCard(BigDecimal tapCashBalance, TapcashCard rfid) {
+        this.cardId = UUID.randomUUID().toString();
         this.tapCashBalance = tapCashBalance;
         this.rfid = rfid;
     }
