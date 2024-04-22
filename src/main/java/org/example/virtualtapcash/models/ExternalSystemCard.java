@@ -20,6 +20,7 @@ public class ExternalSystemCard {
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String cardId;
 
     @Column(name = "tapcash_balance")
@@ -39,6 +40,7 @@ public class ExternalSystemCard {
         this.rfid = rfid;
     }
 
+    @NonNull
     public String getCardId() {
         return cardId;
     }
@@ -47,6 +49,7 @@ public class ExternalSystemCard {
         this.cardId = cardId;
     }
 
+    @NonNull
     public BigDecimal getTapCashBalance() {
         return tapCashBalance;
     }
@@ -55,6 +58,7 @@ public class ExternalSystemCard {
         this.tapCashBalance = tapCashBalance;
     }
 
+    @NonNull
     public TapcashCard getRfid() {
         return rfid;
     }
