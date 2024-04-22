@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         MBankingAccount user = userRes.orElseThrow(() -> new UsernameNotFoundException("Could not find user with id: " + id));
         return new org.springframework.security.core.userdetails.User(
                 id,
-                user.getmPin(),
+                user.getPin(),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 }

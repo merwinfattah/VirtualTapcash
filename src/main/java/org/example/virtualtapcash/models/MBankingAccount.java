@@ -12,17 +12,6 @@ import java.math.BigDecimal;
 @Entity
 @Table( name = "tb_mbankingAccount")
 public class MBankingAccount {
-    @Override
-    public String toString() {
-        return "MBankingAccount{" +
-                "userId='" + userId + '\'' +
-                ", virtualTapCashId='" + virtualTapCashId + '\'' +
-                ", mPin='" + mPin + '\'' +
-                ", name='" + name + '\'' +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", bankAccountBalance=" + bankAccountBalance +
-                '}';
-    }
 
     @Id
     private String userId;
@@ -65,7 +54,7 @@ public class MBankingAccount {
     }
 
     @NonNull
-    public String getmPin() {
+    public String getPin() {
         return mPin;
     }
 
@@ -105,5 +94,15 @@ public class MBankingAccount {
         this.bankAccountBalance = bankAccountBalance;
     }
 
-
+    @Override
+    public String toString() {
+        return "MBankingAccount{" +
+                "userId='" + userId + '\'' +
+                ", virtualTapCashId='" + virtualTapCashId + '\'' +
+                ", mPin='" + mPin + '\'' +
+                ", name='" + name + '\'' +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", bankAccountBalance=" + bankAccountBalance +
+                '}';
+    }
 }

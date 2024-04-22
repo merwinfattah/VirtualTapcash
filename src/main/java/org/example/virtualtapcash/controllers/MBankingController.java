@@ -4,10 +4,14 @@ import org.example.virtualtapcash.models.MBankingAccount;
 import org.example.virtualtapcash.services.MBankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/v1/account")
@@ -16,8 +20,9 @@ public class MBankingController {
     @Autowired
     private MBankingService mBankingService;
 
-//    @PostMapping("/login")
-//    public ResponseEntity<MBankingAccount> loginUser(@RequestBody MBankingAccount user) {
-//
-//    }
+    @GetMapping("/get-user-data")
+    public Optional <MBankingAccount> getAccountnDetails() {
+        String id = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return mBankingService.getUserById(id);
+    }
 }
