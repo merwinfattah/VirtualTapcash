@@ -1,7 +1,7 @@
 package org.example.virtualtapcash.services;
 
 import org.example.virtualtapcash.models.ExternalSystemCard;
-import org.example.virtualtapcash.repository.externalSystemCardRepository;
+import org.example.virtualtapcash.repository.ExternalSystemCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class ExternalSystemCardService {
     @Autowired
-    private externalSystemCardRepository externalSystemCardRepository;
+    private ExternalSystemCardRepository externalSystemCardRepository;
 
     public ExternalSystemCard registerCardToSystem(ExternalSystemCard externalSystemCard) {
         return externalSystemCardRepository.save(externalSystemCard);
