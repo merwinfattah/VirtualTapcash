@@ -21,7 +21,6 @@ public class ExternalSystemCard {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String cardId;
 
     @Column(name = "tapcash_balance")
