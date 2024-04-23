@@ -19,20 +19,20 @@ public class TransactionService {
 
 
 
-    public Transaction createdTransaction(Transaction transaction) { return TransactionJpaRepository.save(transaction);
+    public Transaction createTransaction(Transaction transaction) { return TransactionJpaRepository.save(transaction);
     }
 
     public List<Transaction> getAllTransaction() { return TransactionJpaRepository.findAll();
     }
 
-    public Optional<Transaction> getTransactionId(String transactionId) { return TransactionJpaRepository.findById(transactionId);
+    public Optional<Transaction> getTransactionById(String transactionId) { return TransactionJpaRepository.findById(transactionId);
     }
 
     public void deleteTransaction(String transactionId) {
         TransactionJpaRepository.deleteById(transactionId);
     }
 
-    public Transaction updatedTransaction (Transaction transaction) { return TransactionJpaRepository.save(transaction);
+    public Transaction updateTransaction (Transaction transaction) { return TransactionJpaRepository.save(transaction);
     }
 
 
