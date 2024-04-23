@@ -20,9 +20,9 @@ public class MBankingController {
     @Autowired
     private MBankingService mBankingService;
 
-    @GetMapping("/get-user-data")
-    public Optional <MBankingAccount> getAccountnDetails() {
-        String id = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return mBankingService.getUserById(id);
-    }
+//    @GetMapping("/get-user-data")
+//    public Optional <MBankingAccount> getAccountnDetails() {
+//        String name = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        return mBankingService.
+//    }
 }

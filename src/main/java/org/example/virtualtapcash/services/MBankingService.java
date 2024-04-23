@@ -21,11 +21,11 @@ public class MBankingService {
         return userJpaRepository.findAll();
     }
 
-    public Optional<MBankingAccount> getUserById(String id) {
+    public Optional<MBankingAccount> getUserById(Long id) {
         return userJpaRepository.findById(id);
     }
 
-    public void deleteUser(String id) {
+    public void deleteUser(Long id) {
         userJpaRepository.deleteById(id);
     }
 

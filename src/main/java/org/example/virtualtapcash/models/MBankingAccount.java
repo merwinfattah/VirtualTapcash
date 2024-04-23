@@ -1,20 +1,24 @@
 package org.example.virtualtapcash.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.example.virtualtapcash.entities.Role;
 import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table( name = "tb_mbankingAccount")
+@Table( name = "tb_mbanking_account")
 public class MBankingAccount {
 
     @Id
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long userId;
+
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "virtual_tapcash_id")
     private String virtualTapCashId;
@@ -23,8 +27,8 @@ public class MBankingAccount {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String mPin;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "customer_name")
+    private String customerName;
 
     @Column(name = "account_number")
     private String accountNumber;
@@ -32,75 +36,101 @@ public class MBankingAccount {
     @Column(name = "bank_account_balance")
     private BigDecimal bankAccountBalance;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private List<Role> roles = new ArrayList<>();
+
+
+
     public MBankingAccount() {
     }
 
-    public MBankingAccount(String userId, String virtualTapCashId, String mPin, String name, String accountNumber, BigDecimal bankAccountBalance) {
+    public MBankingAccount(long userId, String username, String virtualTapCashId, String mPin, String customerName, String accountNumber, BigDecimal bankAccountBalance) {
         this.userId = userId;
+        this.username = username;
         this.virtualTapCashId = virtualTapCashId;
         this.mPin = mPin;
-        this.name = name;
+        this.customerName = customerName;
         this.accountNumber = accountNumber;
         this.bankAccountBalance = bankAccountBalance;
     }
 
-    @NonNull
-    public String getUserId() {
+    public long getUserId() {
         return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getVirtualTapCashId() {
         return virtualTapCashId;
     }
 
-    @NonNull
-    public String getPin() {
-        return mPin;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public BigDecimal getBankAccountBalance() {
-        return bankAccountBalance;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public void setVirtualTapCashId(String virtualTapCashId) {
         this.virtualTapCashId = virtualTapCashId;
+    }
+
+    public String getmPin() {
+        return mPin;
     }
 
     public void setmPin(String mPin) {
         this.mPin = mPin;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
+    public BigDecimal getBankAccountBalance() {
+        return bankAccountBalance;
+    }
+
     public void setBankAccountBalance(BigDecimal bankAccountBalance) {
         this.bankAccountBalance = bankAccountBalance;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
     public String toString() {
         return "MBankingAccount{" +
-                "userId='" + userId + '\'' +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
                 ", virtualTapCashId='" + virtualTapCashId + '\'' +
                 ", mPin='" + mPin + '\'' +
-                ", name='" + name + '\'' +
+                ", customerName='" + customerName + '\'' +
                 ", accountNumber='" + accountNumber + '\'' +
                 ", bankAccountBalance=" + bankAccountBalance +
                 '}';

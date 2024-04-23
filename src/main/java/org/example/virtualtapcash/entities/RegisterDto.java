@@ -1,17 +1,9 @@
 package org.example.virtualtapcash.entities;
 
-
 import lombok.Data;
 
 @Data
-public class LoginCredentials {
-
-
-    private String UserId;
-
-
+public class RegisterDto {
+    private String username;
     private String mPin;
-
-
-
 }

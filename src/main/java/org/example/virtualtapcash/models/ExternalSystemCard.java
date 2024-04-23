@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_externalSystemCard")
+@Table(name = "tb_external_system_card")
 public class ExternalSystemCard {
     @Override
     public String toString() {
@@ -21,7 +21,6 @@ public class ExternalSystemCard {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String cardId;
 
     @Column(name = "tapcash_balance")

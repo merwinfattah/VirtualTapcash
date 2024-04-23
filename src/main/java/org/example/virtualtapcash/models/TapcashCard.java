@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table( name = "tb_tapcashCard")
+@Table( name = "tb_tapcash_card")
 public class TapcashCard {
     @Override
     public String toString() {
