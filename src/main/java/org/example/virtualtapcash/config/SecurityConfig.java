@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -27,10 +28,9 @@ public class SecurityConfig {
     public SecurityConfig(JwtAuthFilter authFilter) {
         this.authFilter = authFilter;
     }
-
     // User Creation
     @Bean
-    public CustomUserDetailsService userDetailsService(UserJpaRepository repository, PasswordEncoder passwordEncoder) {
+    public UserDetailsService userDetailsService(UserJpaRepository repository, PasswordEncoder passwordEncoder) {
         return new CustomUserDetailsService(repository, passwordEncoder);
     }
     @Bean
@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .build();
     }
     @Bean
-    public AuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
@@ -57,6 +57,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
 }
