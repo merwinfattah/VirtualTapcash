@@ -21,8 +21,8 @@ public class MBankingService {
         return userJpaRepository.findAll();
     }
 
-    public Optional<MBankingAccount> getUserById(Long id) {
-        return userJpaRepository.findById(id);
+    public Optional<MBankingAccount> getUserById(Long userId) {
+        return userJpaRepository.findById(userId);
     }
 
     public void deleteUser(Long id) {
@@ -32,4 +32,5 @@ public class MBankingService {
     public MBankingAccount updateUser(MBankingAccount user) {
         return userJpaRepository.save(user);
     }
+
 }
