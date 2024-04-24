@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,18 +42,25 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPin()));
-        if (authentication.isAuthenticated()) {
-            String token = jwtService.generateToken(authRequest.getUsername());
-            return ResponseEntity.ok(token);
-        } else {
-            throw new UsernameNotFoundException("Invalid user request!");
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPin()));
+            if (authentication.isAuthenticated()) {
+                String token = jwtService.generateToken(authRequest.getUsername());
+                return ResponseEntity.ok(token);
+            } else {
+                throw new BadCredentialsException("Authentication failed for user: " + authRequest.getUsername());
+            }
+        } catch (AuthenticationException e) {
+            // Log the authentication exception for debugging
+            throw new BadCredentialsException("Authentication failed for user: " + authRequest.getUsername());
         }
     }
 
     @GetMapping("/hello")
-    public String hello() {
-        return "Hello World!";
+    public ResponseEntity<String> hello() {
+
+        String response = "Hello World";
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

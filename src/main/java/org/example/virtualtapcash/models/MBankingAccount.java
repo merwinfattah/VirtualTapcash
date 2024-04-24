@@ -24,8 +24,8 @@ public class MBankingAccount {
     @Column(name = "virtual_tapcash_id")
     private String virtualTapCashId;
 
-    @Column(name = "m_pin")
-    private String mPin;
+    @Column(name = "pin")
+    private String pin;
 
     @Column(name = "customer_name")
     private String customerName;

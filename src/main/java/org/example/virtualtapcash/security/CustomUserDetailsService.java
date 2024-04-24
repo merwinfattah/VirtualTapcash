@@ -30,11 +30,13 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
     }
     public String addUser(MBankingAccount userInfo) {
-        userInfo.setMPin(encoder.encode(userInfo.getMPin()));
-        userJpaRepository.save(userInfo);
-        return "User Added Successfully";
-
-
+        if (userInfo.getPin() != null) {
+            userInfo.setPin(encoder.encode(userInfo.getPin()));
+            userJpaRepository.save(userInfo);
+            return "User Added Successfully";
+        } else {
+            return "Invalid password provided";
+        }
     }
 
 

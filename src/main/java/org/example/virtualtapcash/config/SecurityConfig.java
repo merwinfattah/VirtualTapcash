@@ -1,7 +1,5 @@
 package org.example.virtualtapcash.config;
-
-
-import org.example.virtualtapcash.filter.JwtAuthFilter;
+   import org.example.virtualtapcash.filter.JwtAuthFilter;
 import org.example.virtualtapcash.repository.UserJpaRepository;
 import org.example.virtualtapcash.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -37,8 +35,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationProvider authenticationProvider) throws Exception {
         return http
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
-                        .requestMatchers("/api/v1/auth/hello").authenticated()
+                        .anyRequest().permitAll()
+//                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+//                        .requestMatchers("/api/v1/auth/hello").permitAll()
                 )
                 .httpBasic(withDefaults()).csrf((csrf) -> csrf.disable())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
