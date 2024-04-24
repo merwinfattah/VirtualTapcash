@@ -33,14 +33,14 @@ public class Transaction {
     private Date createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "virtual_tapcash_id")
+    @JoinColumn(name = "virtual_tapcash_id", referencedColumnName = "virtual_tapcash_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private TapcashCard tapcash;
+    private MBankingAccount user;
 
     @ManyToOne
-    @JoinColumn(name = "rfid")
+    @JoinColumn(name = "rfid", referencedColumnName = "rfid")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private TapcashCard rfid;
+    private TapcashCard card;
 
 
 }

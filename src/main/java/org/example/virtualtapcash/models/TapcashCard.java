@@ -40,7 +40,7 @@ public class TapcashCard {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "virtual_tapcash_id")
+    @JoinColumn(name = "virtual_tapcash_id", referencedColumnName = "virtual_tapcash_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private MBankingAccount user;
 
