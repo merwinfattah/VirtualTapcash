@@ -1,75 +1,59 @@
 package org.example.virtualtapcash.controllers;
 
-import org.example.virtualtapcash.entities.LoginCredentials;
-import org.example.virtualtapcash.entities.RegisterDto;
-import org.example.virtualtapcash.entities.Role;
+import org.example.virtualtapcash.entities.AuthRequest;
 import org.example.virtualtapcash.models.MBankingAccount;
-import org.example.virtualtapcash.repository.RoleJpaRepository;
-import org.example.virtualtapcash.repository.UserJpaRepository;
-import org.example.virtualtapcash.security.JWTUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.virtualtapcash.security.CustomUserDetailsService;
+import org.example.virtualtapcash.security.JwtService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collections;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/api/v1/auth")
 public class AuthController {
+    private final CustomUserDetailsService service;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    private UserJpaRepository userJpaRepository;
-
-    private RoleJpaRepository roleJpaRepository;
-
-    private AuthenticationManager authenticationManager;
-
-    private PasswordEncoder passwordEncoder;
-
-
-    @Autowired
-    public AuthController(UserJpaRepository userJpaRepository, RoleJpaRepository roleJpaRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
-        this.userJpaRepository = userJpaRepository;
-        this.roleJpaRepository = roleJpaRepository;
+    public AuthController(CustomUserDetailsService customUserDetailsService, JwtService jwtService, AuthenticationManager authenticationManager) {
+        this.service = customUserDetailsService;
+        this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerHandler(@RequestBody RegisterDto registerDto) {
-        if (userJpaRepository.existsByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
-        }
-            MBankingAccount user = new MBankingAccount();
-            user.setUsername(registerDto.getUsername());
-            user.setmPin(passwordEncoder.encode(registerDto.getMPin()));
-            Role roles = roleJpaRepository.findByName("USER").get();
-            user.setRoles(Collections.singletonList(roles));
-
-            userJpaRepository.save(user);
-
-            return new ResponseEntity<>("User registered success!", HttpStatus.OK);
-
+    public ResponseEntity<String> addNewUser(@RequestBody MBankingAccount userInfo) {
+        String response = service.addUser(userInfo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//    @PostMapping("/login")
-//    public Map<String, Object> loginHandler(@RequestBody LoginCredentials body) {
-//        try {
-//            UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(body.getUserId(), body.getmPin());
-//            authenticationManager.authenticate(authInputToken);
-//            String token = jwtUtil.generateToken(body.getUserId());
-//            return Collections.singletonMap("jwt-token", token);
-//        } catch ( AuthenticationException authExc) {
-//            throw new RuntimeException("Invalid Login Credentials");
-//        }
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPin()));
+        if (authentication.isAuthenticated()) {
+            String token = jwtService.generateToken(authRequest.getUsername());
+            return ResponseEntity.ok(token);
+        } else {
+            throw new UsernameNotFoundException("Invalid user request!");
+        }
+    }
 
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello World!";
+    }
+
+
+//
 }

@@ -3,7 +3,7 @@ package org.example.virtualtapcash.entities;
 import lombok.Data;
 
 @Data
-public class RegisterDto {
+public class RegisterRequest {
     private String username;
-    private String mPin;
+    private String pin;
 }

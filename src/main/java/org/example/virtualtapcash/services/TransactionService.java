@@ -18,17 +18,16 @@ public class TransactionService {
     private TransactionJpaRepository TransactionJpaRepository;
 
 
-
     public Transaction createTransaction(Transaction transaction) { return TransactionJpaRepository.save(transaction);
     }
 
     public List<Transaction> getAllTransaction() { return TransactionJpaRepository.findAll();
     }
 
-    public Optional<Transaction> getTransactionById(String transactionId) { return TransactionJpaRepository.findById(transactionId);
+    public Optional<Transaction> getTransactionById(Long transactionId) { return TransactionJpaRepository.findById(transactionId);
     }
 
-    public void deleteTransaction(String transactionId) {
+    public void deleteTransaction(Long transactionId) {
         TransactionJpaRepository.deleteById(transactionId);
     }
 
