@@ -1,4 +1,4 @@
-package org.example.virtualtapcash.entities;
+package org.example.virtualtapcash.security;
 
 import org.example.virtualtapcash.models.MBankingAccount;
 import org.springframework.security.core.GrantedAuthority;

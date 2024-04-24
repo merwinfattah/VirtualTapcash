@@ -1,4 +1,4 @@
-package org.example.virtualtapcash.security;
+package org.example.virtualtapcash.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

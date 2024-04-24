@@ -1,8 +1,9 @@
-package org.example.virtualtapcash.security;
+package org.example.virtualtapcash.config;
 
 
 import org.example.virtualtapcash.filter.JwtAuthFilter;
 import org.example.virtualtapcash.repository.UserJpaRepository;
+import org.example.virtualtapcash.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
