@@ -47,6 +47,4 @@ public class TapcashCard {
     @JoinColumn(name = "virtual_tapcash_id", referencedColumnName = "virtual_tapcash_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private MBankingAccount user;
-
-
 }

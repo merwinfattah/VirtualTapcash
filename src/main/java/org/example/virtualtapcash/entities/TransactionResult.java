@@ -1,0 +1,15 @@
+package org.example.virtualtapcash.entities;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TransactionResult {
+    private boolean success;
+    private String message;
+
+
+}
