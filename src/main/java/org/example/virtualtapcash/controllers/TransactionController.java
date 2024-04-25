@@ -18,6 +18,7 @@ import org.example.virtualtapcash.exceptions.CardNotFoundException;
 import org.example.virtualtapcash.exceptions.InsufficientFundsException;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -38,9 +39,9 @@ public class TransactionController {
     @GetMapping("/get-transaction-data/{rfid}")
     public ResponseEntity<?> getTransactionData(@PathVariable String rfid) {
         try {
-            Optional<Transaction> transaction = transactionJpaRepository.findDataByRfid(rfid);
-            if(transaction.isPresent()) {
-                return ResponseEntity.ok(transaction.get());
+            List<Transaction> transaction = transactionJpaRepository.findTransactionsByRfid(rfid);
+            if(transaction.isEmpty()) {
+                return ResponseEntity.ok(transaction);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Transactions Data Found");
             }
