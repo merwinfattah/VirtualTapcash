@@ -22,8 +22,8 @@ public class TapcashCardService {
         return tapcashCardJpaRepository.findAll();
     }
 
-    public Optional<TapcashCard> getCardByRfid(String rfid) {
-        return tapcashCardJpaRepository.findById(rfid);
+    public Optional<TapcashCard> getCardByCardId(String cardId) {
+        return tapcashCardJpaRepository.findById(cardId);
     }
 
     public void deleteCard(String rfid) {
