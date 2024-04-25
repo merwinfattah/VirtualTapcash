@@ -42,7 +42,5 @@ public class Transaction {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private TapcashCard card;
 
-    public Transaction(TapcashCard card, BigDecimal nominal) {
 
-    }
 }
