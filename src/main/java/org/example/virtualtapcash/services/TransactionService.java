@@ -8,7 +8,6 @@ import org.example.virtualtapcash.models.TapcashCard;
 import org.example.virtualtapcash.models.Transaction;
 import org.example.virtualtapcash.repository.TapcashCardJpaRepository;
 import org.example.virtualtapcash.repository.TransactionJpaRepository;
-import org.example.virtualtapcash.repository.UserJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
