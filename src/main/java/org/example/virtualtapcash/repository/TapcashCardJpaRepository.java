@@ -1,9 +1,7 @@
 package org.example.virtualtapcash.repository;
 
 import jakarta.transaction.Transactional;
-import org.example.virtualtapcash.models.ExternalSystemCard;
 import org.example.virtualtapcash.models.TapcashCard;
-import org.example.virtualtapcash.models.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
