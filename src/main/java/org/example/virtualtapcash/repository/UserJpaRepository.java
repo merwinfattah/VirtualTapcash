@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface UserJpaRepository extends JpaRepository<MBankingAccount, Long> {
     Optional<MBankingAccount> findByUsername(String name);
 
+    Optional<MBankingAccount> findMBankingAccountByVirtualTapCashId(String virtualTapcashId);
+
     Boolean existsByUsername(String username);
 }

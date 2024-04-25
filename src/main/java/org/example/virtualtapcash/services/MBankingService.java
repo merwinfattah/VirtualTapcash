@@ -18,7 +18,7 @@ public class MBankingService {
     }
 
     public List<MBankingAccount> getAllUser() {
-        return userJpaRepository.findAll();
+            return userJpaRepository.findAll();
     }
 
     public Optional<MBankingAccount> getUserById(Long userId) {

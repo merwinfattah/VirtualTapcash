@@ -21,8 +21,8 @@ public class ExternalSystemCardService {
         return externalSystemCardJpaRepository.findAll();
     }
 
-    public Optional<ExternalSystemCard> getCardByRfid(String rfid) {
-        return externalSystemCardJpaRepository.findById(rfid);
+    public Optional<ExternalSystemCard> getCardById(String cardId) {
+        return externalSystemCardJpaRepository.findById(cardId);
     }
 
     public  void deleteExternalSystemCard(String rfid) {

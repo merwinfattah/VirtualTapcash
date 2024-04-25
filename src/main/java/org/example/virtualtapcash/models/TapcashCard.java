@@ -24,6 +24,9 @@ public class TapcashCard {
     @Column(name = "rfid")
     private String rfid;
 
+    @Column(name = "card_name")
+    private String cardName;
+
     @Column(name = "tapcash_balance")
     private BigDecimal tapCashBalance;
 
