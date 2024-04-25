@@ -33,4 +33,7 @@ public class MBankingService {
         return userJpaRepository.save(user);
     }
 
+    public MBankingAccount createUser(MBankingAccount user) {
+        return userJpaRepository.save(user);
+    }
 }
