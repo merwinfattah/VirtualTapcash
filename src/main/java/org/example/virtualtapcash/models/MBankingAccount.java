@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Table( name = "tb_mbanking_account")
+@Table(name = "tb_mbanking_account",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"virtual_tapcash_id"})})
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

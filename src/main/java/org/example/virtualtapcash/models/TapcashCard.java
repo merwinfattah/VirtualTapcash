@@ -12,7 +12,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table( name = "tb_tapcash_card")
+@Table(name = "tb_tapcash_card",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"rfid"})})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
