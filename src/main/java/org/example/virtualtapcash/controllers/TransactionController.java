@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.example.virtualtapcash.exceptions.CardNotFoundException;
 import org.example.virtualtapcash.exceptions.InsufficientFundsException;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -59,9 +60,12 @@ public class TransactionController {
                     .orElseThrow(() -> new CardNotFoundException("Card not found with RFID: " + paymentRequest.getRfid()));
 
             // Check if the card has sufficient balance
-            if (card.getTapCashBalance().compareTo(paymentRequest.getNominal()) <= 4000) {
-                throw new InsufficientFundsException("Insufficient funds available.");
+            // Assuming paymentRequest.getNominal() returns a BigDecimal
+            BigDecimal minRequiredBalance = paymentRequest.getNominal().add(new BigDecimal("4000"));
+            if (card.getTapCashBalance().compareTo(minRequiredBalance) <= 0) {
+                throw new InsufficientFundsException("Insufficient funds available. A minimum balance of 4000 over the transaction amount is required.");
             }
+
 
             // Deduct the transaction amount from the card's balance
             card.setTapCashBalance(card.getTapCashBalance().subtract(paymentRequest.getNominal()));
