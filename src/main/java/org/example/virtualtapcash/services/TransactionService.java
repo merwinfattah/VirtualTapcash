@@ -23,8 +23,6 @@ import java.util.Optional;
 public class TransactionService {
     @Autowired
     private TransactionJpaRepository transactionJpaRepository;
-    @Autowired
-    private TapcashCardJpaRepository tapcashCardJpaRepository;
 
 
     public Transaction createTransaction(Transaction transaction) { return transactionJpaRepository.save(transaction);
@@ -43,31 +41,5 @@ public class TransactionService {
     public Transaction updateTransaction (Transaction transaction) { return transactionJpaRepository.save(transaction);
     }
 
-
-    @Transactional
-    public TransactionResult processPayment(String rfid, BigDecimal nominal) {
-        // Retrieve the TapcashCard by RFID
-        TapcashCard card = tapcashCardJpaRepository.getCardByRfid(rfid)
-                .orElseThrow(() -> new CardNotFoundException("Card not found with RFID: " + rfid));
-
-        // Check if the card has sufficient balance
-        if (card.getTapCashBalance().compareTo(nominal) < 0) {
-            throw new InsufficientFundsException("Insufficient funds available.");
-        }
-
-        // Deduct the transaction amount from the card's balance
-        card.setTapCashBalance(card.getTapCashBalance().subtract(nominal));
-        tapcashCardJpaRepository.save(card);
-
-        // Record the transaction
-        Transaction transaction = new Transaction();
-        transaction.setCard(card);
-        transaction.setNominal(nominal);
-        transaction.setCreatedAt(new Date()); // Ensure you set all required fields
-        transactionJpaRepository.save(transaction);
-
-        // Return a success result
-        return new TransactionResult(true, "Payment successful");
-    }
 
 }
