@@ -25,15 +25,31 @@ public class MBankingService {
         return userJpaRepository.findById(userId);
     }
 
-    public void deleteUser(Long id) {
-        userJpaRepository.deleteById(id);
-    }
-
-    public MBankingAccount updateUser(MBankingAccount user) {
-        return userJpaRepository.save(user);
-    }
-
     public MBankingAccount createUser(MBankingAccount user) {
         return userJpaRepository.save(user);
     }
+
+    public Optional<MBankingAccount> updateUser(Long userId, MBankingAccount user) {
+        if (user.getUserId() != userId) {
+            throw new IllegalArgumentException("Mismatched user ID in the request path and body.");
+        }
+        return userJpaRepository.findById(userId).map(existingUser -> {
+            // Here, explicitly set the fields that can be updated
+            existingUser.setUsername(user.getUsername());
+            existingUser.setVirtualTapCashId(user.getVirtualTapCashId());
+            existingUser.setCustomerName(user.getCustomerName());
+            existingUser.setAccountNumber(user.getAccountNumber());
+            existingUser.setBankAccountBalance(user.getBankAccountBalance());
+
+            // After setting the new values, save the updated entity
+            return userJpaRepository.save(existingUser);
+        });
+    }
+
+
+    public void deleteUser(Long userId) {
+        userJpaRepository.deleteById(userId); // This throws EmptyResultDataAccessException if the entity with the given id is not found
+    }
+
+
 }

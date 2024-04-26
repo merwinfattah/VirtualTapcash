@@ -28,7 +28,7 @@ public class CardController {
 
     }
 
-    @GetMapping("/get-card/{cardId")
+    @GetMapping("/get-card/{cardId}")
     public ResponseEntity<?> getOneCard(@PathVariable String cardId) {
         try {
             return tapcashCardService.getOneCard(cardId);
