@@ -14,5 +14,6 @@ public class TransactionRequest {
     private BigDecimal nominal;
     private String virtual_tapcash_id;
     private String type;
+    private String pin;
 
 }
