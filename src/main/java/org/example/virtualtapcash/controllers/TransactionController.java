@@ -4,12 +4,7 @@ import org.example.virtualtapcash.entities.PaymentRequest;
 import org.example.virtualtapcash.entities.TransactionRequest;
 import org.example.virtualtapcash.entities.TransactionResult;
 import org.example.virtualtapcash.exceptions.ErrorTransaction;
-import org.example.virtualtapcash.models.MBankingAccount;
-import org.example.virtualtapcash.models.TapcashCard;
 import org.example.virtualtapcash.models.Transaction;
-import org.example.virtualtapcash.repository.TapcashCardJpaRepository;
-import org.example.virtualtapcash.repository.TransactionJpaRepository;
-import org.example.virtualtapcash.repository.UserJpaRepository;
 import org.example.virtualtapcash.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.example.virtualtapcash.exceptions.CardNotFoundException;
 import org.example.virtualtapcash.exceptions.InsufficientFundsException;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/transaction")
@@ -58,7 +50,7 @@ public class TransactionController {
     @PostMapping("/top-up-n-withdraw")
     public ResponseEntity<?> createTransaction(@RequestBody TransactionRequest transactionRequest) {
         try {
-            TransactionResult result = transactionService.handleTopUpWithdrawal(transactionRequest.getRfid(), transactionRequest.getNominal(), transactionRequest.getType(), transactionRequest.getVirtual_tapcash_id());
+            TransactionResult result = transactionService.handleTopUpWithdrawal(transactionRequest.getRfid(), transactionRequest.getNominal(), transactionRequest.getType(), transactionRequest.getVirtual_tapcash_id(), transactionRequest.getPin());
             return ResponseEntity.ok(result.getMessage());
         } catch (ErrorTransaction | CardNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
