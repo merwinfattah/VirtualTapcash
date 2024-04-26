@@ -41,7 +41,4 @@ public class MBankingAccount {
     @Column(name = "role")
     private String role;
 
-
-
-
 }
