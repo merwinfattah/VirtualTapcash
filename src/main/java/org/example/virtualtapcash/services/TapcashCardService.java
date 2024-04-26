@@ -120,7 +120,6 @@ public class TapcashCardService {
     }
 
 
-
     public ResponseEntity<?> getAllCard(String virtualTapCashId) {
 
         List<TapcashCard> cardsData = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashId(virtualTapCashId, "Active");
@@ -131,6 +130,16 @@ public class TapcashCardService {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(stringMessage);
         }
 
+    }
+
+    public ResponseEntity<?> getOneCard(String cardId) {
+        Optional <TapcashCard> card = tapcashCardJpaRepository.findById(cardId);
+        if (!card.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(card);
+        } else {
+            String stringMessage = "No Cards Found for  Tapcash ID: " + cardId;
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(stringMessage);
+        }
     }
 
 

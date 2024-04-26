@@ -28,6 +28,16 @@ public class CardController {
 
     }
 
+    @GetMapping("/get-card/{cardId")
+    public ResponseEntity<?> getOneCard(@PathVariable String cardId) {
+        try {
+            return tapcashCardService.getOneCard(cardId);
+        } catch (Exception e) {
+            String errorMessage = "An error occurred while retrieving card data.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
+    }
+
     @PostMapping ("/add-card")
     public ResponseEntity<?> addCard(@RequestBody AddCardRequest request) {
         try {
