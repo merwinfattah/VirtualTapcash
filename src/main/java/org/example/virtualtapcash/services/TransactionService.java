@@ -76,6 +76,7 @@ public class TransactionService {
         transaction.setNominal(nominal);
         transaction.setCreatedAt(new Date());
         transaction.setUser(card.getUser());
+        transaction.setType("PAYMENT");
         transactionJpaRepository.save(transaction);
 
         return new TransactionResult(true, "Payment successful");
@@ -112,6 +113,7 @@ public class TransactionService {
         transaction.setNominal(nominal);
         transaction.setCreatedAt(new Date());
         transaction.setUser(card.getUser());
+        transaction.setType(type);
         transactionJpaRepository.save(transaction);
 
         return new TransactionResult(true, type + " successful");
