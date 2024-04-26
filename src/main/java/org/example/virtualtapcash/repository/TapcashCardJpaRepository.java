@@ -16,6 +16,8 @@ public interface TapcashCardJpaRepository extends JpaRepository<TapcashCard, Str
 
     List <TapcashCard> findAllByOrderByCardNameAsc();
 
+    Optional <TapcashCard> findTapcashCardsByCardId(String cardId);
+
 
     @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND status = ?2", nativeQuery = true)
     List<TapcashCard> findTapcashCardsByVirtualTapcashId(String virtualTapcashId, String status);

@@ -133,8 +133,8 @@ public class TapcashCardService {
     }
 
     public ResponseEntity<?> getOneCard(String cardId) {
-        Optional <TapcashCard> card = tapcashCardJpaRepository.findById(cardId);
-        if (!card.isPresent()) {
+        Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
+        if (card.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(card);
         } else {
             String stringMessage = "No Cards Found for  Tapcash ID: " + cardId;
