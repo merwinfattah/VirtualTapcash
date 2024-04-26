@@ -13,23 +13,9 @@ public class ExternalSystemCardService {
     @Autowired
     private ExternalSystemCardJpaRepository externalSystemCardJpaRepository;
 
-    public ExternalSystemCard registerCardToSystem(ExternalSystemCard externalSystemCard) {
-        return externalSystemCardJpaRepository.save(externalSystemCard);
-    }
-
-    public List<ExternalSystemCard> getAllExternalSystemCard() {
-        return externalSystemCardJpaRepository.findAll();
-    }
 
     public Optional<ExternalSystemCard> getCardById(String cardId) {
         return externalSystemCardJpaRepository.findById(cardId);
     }
 
-    public  void deleteExternalSystemCard(String rfid) {
-        externalSystemCardJpaRepository.deleteById(rfid);
-    }
-
-    public ExternalSystemCard updateExternalSystemCard(ExternalSystemCard externalSystemCard) {
-        return externalSystemCardJpaRepository.save(externalSystemCard);
-    }
 }

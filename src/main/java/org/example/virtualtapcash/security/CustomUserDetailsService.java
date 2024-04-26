@@ -2,6 +2,7 @@ package org.example.virtualtapcash.security;
 
 import org.example.virtualtapcash.models.MBankingAccount;
 import org.example.virtualtapcash.repository.UserJpaRepository;
+import org.example.virtualtapcash.security.UserInfoDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
