@@ -30,4 +30,14 @@ public class    AccountController {
 
     }
 
+    @PostMapping("/authorize-qr/{pin}")
+    public ResponseEntity<?> authorizeQr(@PathVariable Long userId, @RequestParam String pin) {
+        try {
+            return mBankingService.verifyQr(userId, pin);
+        } catch (Exception e) {
+            String errorMessage = "An error occurred while retrieving card data.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
+    }
+
 }
