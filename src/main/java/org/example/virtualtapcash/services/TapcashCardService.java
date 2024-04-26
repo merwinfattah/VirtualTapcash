@@ -34,7 +34,7 @@ public class TapcashCardService {
 
             if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && !tapcashCardJpaRepository.isCardActive(cardId)) {
 
-                List<TapcashCard> cardList = tapcashCardJpaRepository.findAllByOrderByCardNameAsc();
+                List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(virtualTapcashId);
 
                 String cardName = "";
 
@@ -71,7 +71,7 @@ public class TapcashCardService {
 
                 TapcashCard newCard = new TapcashCard();
 
-                if (tapcashCardJpaRepository.isThereCardSetToDefault()) {
+                if (tapcashCardJpaRepository.isThereCardSetToDefaultByVirtualTapcashId(virtualTapcashId)) {
                     newCard.setIsDefault(false);
                 } else {
                     newCard.setIsDefault(true);
@@ -79,7 +79,7 @@ public class TapcashCardService {
 
                 Optional<MBankingAccount> user = userJpaRepository.findMBankingAccountByVirtualTapCashId(virtualTapcashId);
 
-                List<TapcashCard> cardList = tapcashCardJpaRepository.findAllByOrderByCardNameAsc();
+                List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(virtualTapcashId);
 
                 String cardName = "";
 

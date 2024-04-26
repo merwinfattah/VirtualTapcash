@@ -18,12 +18,15 @@ public interface TapcashCardJpaRepository extends JpaRepository<TapcashCard, Str
 
     Optional <TapcashCard> findTapcashCardsByCardId(String cardId);
 
+    @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 ORDER BY card_name ASC", nativeQuery = true)
+    List<TapcashCard> findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(String virtualTapcashId);
+
 
     @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND status = ?2", nativeQuery = true)
     List<TapcashCard> findTapcashCardsByVirtualTapcashId(String virtualTapcashId, String status);
 
-    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM tb_tapcash_card WHERE is_default = true", nativeQuery = true)
-    boolean isThereCardSetToDefault();
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM tb_tapcash_card WHERE is_default = true AND virtual_tapcash_id = ?1", nativeQuery = true)
+    boolean isThereCardSetToDefaultByVirtualTapcashId(String virtualTapcashId);
 
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM tb_tapcash_card WHERE card_id = ?1", nativeQuery = true)
     boolean isCardAlreadyRegistered(String cardId);
