@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "tb_mbanking_account",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"virtual_tapcash_id"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"virtual_tapcash_id"}), @UniqueConstraint(columnNames = {"account_number"})})
 
 @Data
 @AllArgsConstructor

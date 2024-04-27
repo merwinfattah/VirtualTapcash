@@ -1,5 +1,6 @@
 package org.example.virtualtapcash.controllers;
 
+import org.example.virtualtapcash.entities.AccountRegisterRequest;
 import org.example.virtualtapcash.entities.AuthRequest;
 import org.example.virtualtapcash.models.MBankingAccount;
 import org.example.virtualtapcash.security.CustomUserDetailsService;
@@ -31,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> addNewUser(@RequestBody MBankingAccount userInfo) {
+    public ResponseEntity<String> addNewUser(@RequestBody AccountRegisterRequest userInfo) {
         String response = service.addUser(userInfo);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
