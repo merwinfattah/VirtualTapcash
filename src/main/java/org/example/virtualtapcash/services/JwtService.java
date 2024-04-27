@@ -1,4 +1,4 @@
-package org.example.virtualtapcash.security;
+package org.example.virtualtapcash.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -3,14 +3,14 @@ package org.example.virtualtapcash.services;
 
 
 
-import org.example.virtualtapcash.entities.TransactionResult;
+import org.example.virtualtapcash.dto.TransactionResultDto;
 import org.example.virtualtapcash.exceptions.ErrorTransaction;
 import org.example.virtualtapcash.models.TapcashCard;
 import org.example.virtualtapcash.models.Transaction;
 import org.example.virtualtapcash.models.MBankingAccount;
-import org.example.virtualtapcash.repository.TapcashCardJpaRepository;
-import org.example.virtualtapcash.repository.TransactionJpaRepository;
-import org.example.virtualtapcash.repository.UserJpaRepository;
+import org.example.virtualtapcash.repositories.TapcashCardJpaRepository;
+import org.example.virtualtapcash.repositories.TransactionJpaRepository;
+import org.example.virtualtapcash.repositories.AccountJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class TransactionService {
     private TapcashCardJpaRepository tapcashCardJpaRepository;
 
     @Autowired
-    private UserJpaRepository userJpaRepository;
+    private AccountJpaRepository accountJpaRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -46,7 +46,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionResult processPayment(String rfid, BigDecimal nominal) throws CardNotFoundException, InsufficientFundsException {
+    public TransactionResultDto processPayment(String rfid, BigDecimal nominal) throws CardNotFoundException, InsufficientFundsException {
         TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByRfid(rfid)
                 .orElseThrow(() -> new CardNotFoundException("Card not found with RFID: " + rfid));
 
@@ -66,15 +66,15 @@ public class TransactionService {
         transaction.setType("PAYMENT");
         transactionJpaRepository.save(transaction);
 
-        return new TransactionResult(true, "Payment successful");
+        return new TransactionResultDto(true, "Payment successful");
     }
 
     @Transactional
-    public TransactionResult handleTopUpWithdrawal(String rfid, BigDecimal nominal, String type, String virtualTapcashId,String pin) throws CardNotFoundException, ErrorTransaction {
+    public TransactionResultDto handleTopUpWithdrawal(String rfid, BigDecimal nominal, String type, String virtualTapcashId, String pin) throws CardNotFoundException, ErrorTransaction {
         TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByRfid(rfid)
                 .orElseThrow(() -> new CardNotFoundException("Card not found with RFID: " + rfid));
 
-        MBankingAccount mBankingAccount = userJpaRepository.getUserByVirtualTapcashId(String.valueOf(virtualTapcashId))
+        MBankingAccount mBankingAccount = accountJpaRepository.getUserByVirtualTapcashId(String.valueOf(virtualTapcashId))
                 .orElseThrow(() -> new CardNotFoundException("Card not found with Virtual Tapcash Id: " + virtualTapcashId));
 
         String savedPin = mBankingAccount.getPin();
@@ -97,7 +97,7 @@ public class TransactionService {
             mBankingAccount.setBankAccountBalance(mBankingAccount.getBankAccountBalance().add(nominal));
             card.setTapCashBalance(totalWithdraw);
         }
-        userJpaRepository.save(mBankingAccount);
+        accountJpaRepository.save(mBankingAccount);
         tapcashCardJpaRepository.save(card);
 
         Transaction transaction = new Transaction();
@@ -108,7 +108,7 @@ public class TransactionService {
         transaction.setType(type);
         transactionJpaRepository.save(transaction);
 
-        return new TransactionResult(true, type + " successful");
+        return new TransactionResultDto(true, type + " successful");
     }
 
 

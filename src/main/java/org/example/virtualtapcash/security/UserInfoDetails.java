@@ -1,5 +1,4 @@
 package org.example.virtualtapcash.security;
-
 import org.example.virtualtapcash.models.MBankingAccount;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,15 +8,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 public class UserInfoDetails implements UserDetails {
-    private String username;
-    private String pin;
+    private String name;
+    private String password;
     private List<GrantedAuthority> authorities;
-
     public UserInfoDetails(MBankingAccount userInfo) {
-        this.username = username;
-        this.pin = pin;
+        this.name = userInfo.getUsername();
+        this.password = userInfo.getPin();
         this.authorities = Arrays.stream(userInfo.getRole().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
@@ -27,15 +24,13 @@ public class UserInfoDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
-
     @Override
     public String getPassword() {
-        return pin;
+        return password;
     }
-
     @Override
     public String getUsername() {
-        return username;
+        return name;
     }
     @Override
     public boolean isAccountNonExpired() {

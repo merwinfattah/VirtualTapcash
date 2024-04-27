@@ -1,9 +1,8 @@
 package org.example.virtualtapcash.security;
 
-import org.example.virtualtapcash.entities.AccountRegisterRequest;
+import org.example.virtualtapcash.dto.AccountRegisterDto;
 import org.example.virtualtapcash.models.MBankingAccount;
-import org.example.virtualtapcash.repository.UserJpaRepository;
-import org.example.virtualtapcash.security.UserInfoDetails;
+import org.example.virtualtapcash.repositories.AccountJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,17 +17,17 @@ import java.util.UUID;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserJpaRepository userJpaRepository;
+    private final AccountJpaRepository accountJpaRepository;
 
     private final PasswordEncoder encoder;
 
-    public CustomUserDetailsService(UserJpaRepository userJpaRepository, PasswordEncoder encoder) {
-        this.userJpaRepository = userJpaRepository;
+    public CustomUserDetailsService(AccountJpaRepository accountJpaRepository, PasswordEncoder encoder) {
+        this.accountJpaRepository = accountJpaRepository;
         this.encoder = encoder;
     }
 
     private String generateAccountNumber() {
-        StringBuilder accountNumber = new StringBuilder("ACCT-");
+        StringBuilder accountNumber = new StringBuilder("");
         // You can customize the format of the account number based on your bank's requirements
         // For example, you can add random digits to the account number
         for (int i = 0; i < 8; i++) {
@@ -39,14 +38,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<MBankingAccount> userDetail = userJpaRepository.findByUsername(username);
+        Optional<MBankingAccount> userDetail = accountJpaRepository.findByUsername(username);
         // Converting userDetail to UserDetails
         return userDetail.map(UserInfoDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
     }
-    public String addUser(AccountRegisterRequest userInfo) {
+    public String addUser(AccountRegisterDto userInfo) {
         if (userInfo.getPin() != null) {
-            if (!userJpaRepository.existsByUsername(userInfo.getUsername())) {
+            if (!accountJpaRepository.existsByUsername(userInfo.getUsername())) {
                 MBankingAccount newUser = new MBankingAccount();
                 newUser.setUsername(userInfo.getUsername());
                 newUser.setPin(encoder.encode(userInfo.getPin()));
@@ -63,7 +62,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 newUser.setVirtualTapCashId(virtualTapCashId);
                 newUser.setRole("USER");
 
-                userJpaRepository.save(newUser);
+                accountJpaRepository.save(newUser);
                 return "User Added Successfully";
             }
 

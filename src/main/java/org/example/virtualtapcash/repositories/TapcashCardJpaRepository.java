@@ -1,4 +1,4 @@
-package org.example.virtualtapcash.repository;
+package org.example.virtualtapcash.repositories;
 
 import jakarta.transaction.Transactional;
 import org.example.virtualtapcash.models.TapcashCard;

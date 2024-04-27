@@ -3,8 +3,8 @@ package org.example.virtualtapcash.services;
 import org.example.virtualtapcash.models.ExternalSystemCard;
 import org.example.virtualtapcash.models.MBankingAccount;
 import org.example.virtualtapcash.models.TapcashCard;
-import org.example.virtualtapcash.repository.TapcashCardJpaRepository;
-import org.example.virtualtapcash.repository.UserJpaRepository;
+import org.example.virtualtapcash.repositories.TapcashCardJpaRepository;
+import org.example.virtualtapcash.repositories.AccountJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class TapcashCardService {
     ExternalSystemCardService externalSystemCardService;
 
     @Autowired
-    UserJpaRepository userJpaRepository;
+    AccountJpaRepository accountJpaRepository;
 
     public ResponseEntity<?> registerCard(String cardId, String virtualTapcashId) {
 
@@ -77,7 +77,7 @@ public class TapcashCardService {
                     newCard.setIsDefault(true);
                 }
 
-                Optional<MBankingAccount> user = userJpaRepository.findMBankingAccountByVirtualTapCashId(virtualTapcashId);
+                Optional<MBankingAccount> user = accountJpaRepository.findMBankingAccountByVirtualTapCashId(virtualTapcashId);
 
                 List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(virtualTapcashId);
 

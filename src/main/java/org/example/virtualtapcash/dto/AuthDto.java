@@ -1,20 +1,14 @@
-package org.example.virtualtapcash.entities;
+package org.example.virtualtapcash.dto;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountRegisterRequest {
-
+public class AuthDto {
     private String username;
-
     private String pin;
-
-    private String customerName;
-
 }

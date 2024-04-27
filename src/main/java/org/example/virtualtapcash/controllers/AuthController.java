@@ -1,10 +1,9 @@
 package org.example.virtualtapcash.controllers;
 
-import org.example.virtualtapcash.entities.AccountRegisterRequest;
-import org.example.virtualtapcash.entities.AuthRequest;
-import org.example.virtualtapcash.models.MBankingAccount;
+import org.example.virtualtapcash.dto.AccountRegisterDto;
+import org.example.virtualtapcash.dto.AuthDto;
 import org.example.virtualtapcash.security.CustomUserDetailsService;
-import org.example.virtualtapcash.security.JwtService;
+import org.example.virtualtapcash.services.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,24 +31,24 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> addNewUser(@RequestBody AccountRegisterRequest userInfo) {
+    public ResponseEntity<String> addNewUser(@RequestBody AccountRegisterDto userInfo) {
         String response = service.addUser(userInfo);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthDto authDto) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPin()));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authDto.getUsername(), authDto.getPin()));
             if (authentication.isAuthenticated()) {
-                String token = jwtService.generateToken(authRequest.getUsername());
+                String token = jwtService.generateToken(authDto.getUsername());
                 return ResponseEntity.ok(token);
             } else {
-                throw new BadCredentialsException("Authentication failed for user: " + authRequest.getUsername());
+                throw new BadCredentialsException("Authentication failed for user: " + authDto.getUsername());
             }
         } catch (AuthenticationException e) {
             // Log the authentication exception for debugging
-            throw new BadCredentialsException("Authentication failed for user: " + authRequest.getUsername());
+            throw new BadCredentialsException("Authentication failed for user: " + authDto.getUsername());
         }
     }
 

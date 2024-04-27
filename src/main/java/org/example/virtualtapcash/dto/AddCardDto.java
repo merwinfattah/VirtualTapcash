@@ -1,5 +1,4 @@
-package org.example.virtualtapcash.entities;
-
+package org.example.virtualtapcash.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthRequest {
-    private String username;
-    private String pin;
+public class AddCardDto {
+    private String cardId;
+    private String virtualTapcashId;
 }

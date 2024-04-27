@@ -1,4 +1,4 @@
-package org.example.virtualtapcash.entities;
+package org.example.virtualtapcash.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,11 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentRequest {
+public class TransactionDto {
     private String rfid;
     private BigDecimal nominal;
+    private String virtual_tapcash_id;
+    private String type;
+    private String pin;
 
 }

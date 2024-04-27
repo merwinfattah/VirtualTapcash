@@ -1,6 +1,6 @@
 package org.example.virtualtapcash.config;
-import org.example.virtualtapcash.filter.JwtAuthFilter;
-import org.example.virtualtapcash.repository.UserJpaRepository;
+import org.example.virtualtapcash.filters.JwtAuthFilter;
+import org.example.virtualtapcash.repositories.AccountJpaRepository;
 import org.example.virtualtapcash.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +35,7 @@ public class SecurityConfig {
     }
     // User Creation
     @Bean
-    public UserDetailsService userDetailsService(UserJpaRepository repository, PasswordEncoder passwordEncoder) {
+    public UserDetailsService userDetailsService(AccountJpaRepository repository, PasswordEncoder passwordEncoder) {
         return new CustomUserDetailsService(repository, passwordEncoder);
     }
     @Bean
@@ -45,9 +45,9 @@ public class SecurityConfig {
         return http
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((authz) -> authz
-                        .anyRequest().permitAll()
-//                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
-//                        .requestMatchers("/api/v1/auth/hello").permitAll()
+                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/hello", "/api/v1/account/get-user-data").authenticated()
+
                 )
                 .httpBasic(withDefaults()).csrf((csrf) -> csrf.disable())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -59,8 +59,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Requestor-Type","Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

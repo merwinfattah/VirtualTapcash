@@ -1,6 +1,6 @@
 package org.example.virtualtapcash.controllers;
 
-import org.example.virtualtapcash.entities.AddCardRequest;
+import org.example.virtualtapcash.dto.AddCardDto;
 import org.example.virtualtapcash.services.TapcashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class CardController {
     }
 
     @PostMapping ("/add-card")
-    public ResponseEntity<?> addCard(@RequestBody AddCardRequest request) {
+    public ResponseEntity<?> addCard(@RequestBody AddCardDto request) {
         try {
             return tapcashCardService.registerCard(request.getCardId(), request.getVirtualTapcashId());
         } catch (Exception e) {
