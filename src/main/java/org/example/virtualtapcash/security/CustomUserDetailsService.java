@@ -1,8 +1,8 @@
 package org.example.virtualtapcash.security;
 
-import org.example.virtualtapcash.dto.AccountRegisterDto;
-import org.example.virtualtapcash.models.MBankingAccount;
-import org.example.virtualtapcash.repositories.AccountJpaRepository;
+import org.example.virtualtapcash.dto.account.request.AccountRegisterDto;
+import org.example.virtualtapcash.model.MBankingAccount;
+import org.example.virtualtapcash.repository.AccountJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

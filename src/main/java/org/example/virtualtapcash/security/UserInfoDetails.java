@@ -1,5 +1,5 @@
 package org.example.virtualtapcash.security;
-import org.example.virtualtapcash.models.MBankingAccount;
+import org.example.virtualtapcash.model.MBankingAccount;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

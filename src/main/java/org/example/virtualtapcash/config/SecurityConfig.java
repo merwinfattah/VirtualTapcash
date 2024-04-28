@@ -1,6 +1,6 @@
 package org.example.virtualtapcash.config;
-import org.example.virtualtapcash.filters.JwtAuthFilter;
-import org.example.virtualtapcash.repositories.AccountJpaRepository;
+import org.example.virtualtapcash.filter.JwtAuthFilter;
+import org.example.virtualtapcash.repository.AccountJpaRepository;
 import org.example.virtualtapcash.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
