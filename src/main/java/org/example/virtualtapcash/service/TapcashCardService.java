@@ -34,27 +34,7 @@ public class TapcashCardService {
 
             if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && !tapcashCardJpaRepository.isCardActive(cardId)) {
 
-                List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(virtualTapcashId);
-
-                String cardName = "";
-
-                int order = 1;
-
-                for (TapcashCard tempCard : cardList) {
-
-                    if (!tempCard.getCardName().isBlank()) {
-                        if (!("Virtual Tapcash " + order).equals(tempCard.getCardName())) {
-                            cardName = "Virtual Tapcash " + order;
-                            break;
-                        }
-                        order++;
-                    }
-
-                }
-
-                if (cardName.equals("")) {
-                    cardName = "Virtual Tapcash " + order;
-                }
+                String cardName = generateVirtualTapcashName(virtualTapcashId);
 
                 tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId);
 
@@ -63,7 +43,6 @@ public class TapcashCardService {
                 return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
             }
-
 
             Optional<ExternalSystemCard> relatedCard = externalSystemCardService.getCardById(cardId);
 
@@ -79,27 +58,7 @@ public class TapcashCardService {
 
                 Optional<MBankingAccount> user = accountJpaRepository.findMBankingAccountByVirtualTapCashId(virtualTapcashId);
 
-                List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(virtualTapcashId);
-
-                String cardName = "";
-
-                int order = 1;
-
-                for (TapcashCard tempCard : cardList) {
-
-                    if (!tempCard.getCardName().isBlank()) {
-                        if (!("Virtual Tapcash " + order).equals(tempCard.getCardName())) {
-                            cardName = "Virtual Tapcash " + order;
-                            break;
-                        }
-                        order++;
-                    }
-
-                }
-
-                if (cardName.equals("")) {
-                    cardName = "Virtual Tapcash " + order;
-                }
+                String cardName = generateVirtualTapcashName(virtualTapcashId);
 
                 newCard.setCardId(cardId);
                 newCard.setRegisteredAt(new Date());
@@ -165,6 +124,32 @@ public class TapcashCardService {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body("Card Successfully Removed!");
+    }
+
+    private String generateVirtualTapcashName(String virtualTapcashId) {
+        List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(virtualTapcashId);
+
+        String cardName = "";
+
+        int order = 1;
+
+        for (TapcashCard tempCard : cardList) {
+
+            if (!tempCard.getCardName().isBlank()) {
+                if (!("Virtual Tapcash " + order).equals(tempCard.getCardName())) {
+                    cardName = "Virtual Tapcash " + order;
+                    break;
+                }
+                order++;
+            }
+
+        }
+
+        if (cardName.equals("")) {
+            cardName = "Virtual Tapcash " + order;
+        }
+
+        return cardName;
     }
 
 }
