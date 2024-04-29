@@ -55,13 +55,18 @@ public class TransactionService {
         TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId)
                 .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
 
+        ExternalSystemCard external = externalSystemCardJpaRepository.findTapcashCardsByCardId(cardId)
+                .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
+
         BigDecimal minRequiredBalance = nominal.add(new BigDecimal("4000"));
         if (card.getTapCashBalance().compareTo(minRequiredBalance) <= 0) {
             throw new InsufficientFundsException("Insufficient funds available. A minimum balance of 4000 over the transaction amount is required.");
         }
 
         card.setTapCashBalance(card.getTapCashBalance().subtract(nominal));
+        external.setTapCashBalance(external.getTapCashBalance().subtract(nominal));
         tapcashCardJpaRepository.save(card);
+        externalSystemCardJpaRepository.save(external);
 
         Transaction transaction = new Transaction();
         transaction.setCard(card);
