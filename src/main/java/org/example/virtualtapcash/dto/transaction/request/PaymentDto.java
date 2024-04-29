@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentDto {
-    private String rfid;
+    private String cardId;
     private BigDecimal nominal;
 
 }

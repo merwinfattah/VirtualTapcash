@@ -10,10 +10,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDto {
-    private String rfid;
+    private String cardId;
     private BigDecimal nominal;
     private String virtual_tapcash_id;
     private String type;
     private String pin;
-
 }

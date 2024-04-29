@@ -45,8 +45,8 @@ public class SecurityConfig {
         return http
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/card/get-card/", "/api/v1/transaction/**").permitAll()
-                        .requestMatchers("/api/v1/auth/hello", "/api/v1/account/**", "/api/v1/card/**").authenticated()
+                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/card/get-card/", "api/v1/transaction/payment").permitAll()
+                        .requestMatchers("/api/v1/auth/hello", "/api/v1/account/get-user-data", "/api/v1/account/authorize-qr/", "/api/v1/card/get-cards-data/", "/api/v1/card/add-card", "/api/v1/card/remove-card/", "/api/v1/transaction/get-transaction-data/", "api/v1/transaction/top-up-n-withdraw").authenticated()
 
                 )
                 .httpBasic(withDefaults()).csrf((csrf) -> csrf.disable())

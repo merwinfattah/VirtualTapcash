@@ -22,10 +22,10 @@ public class TransactionController {
     @Autowired
     private  TransactionService transactionService;
 
-    @GetMapping("/get-transaction-data/{rfid}")
-    public ResponseEntity<?> getTransactionData(@PathVariable String rfid) {
+    @GetMapping("/get-transaction-data/{cardId}")
+    public ResponseEntity<?> getTransactionData(@PathVariable String cardId) {
         try {
-            List<Transaction> transactions = transactionService.getTransactionsByRfid(rfid);
+            List<Transaction> transactions = transactionService.getTransactionByCardId(cardId);
             return ResponseEntity.ok(transactions);
         } catch (CardNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -38,7 +38,7 @@ public class TransactionController {
     @PostMapping("/payment")
     public ResponseEntity<?> createPayment(@RequestBody PaymentDto paymentDto) {
         try {
-            TransactionResultDto result = transactionService.processPayment(paymentDto.getRfid(), paymentDto.getNominal());
+            TransactionResultDto result = transactionService.processPayment(paymentDto.getCardId(), paymentDto.getNominal());
             return ResponseEntity.ok(result.getMessage());
         } catch (InsufficientFundsException | CardNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -50,7 +50,7 @@ public class TransactionController {
     @PostMapping("/top-up-n-withdraw")
     public ResponseEntity<?> createTransaction(@RequestBody TransactionDto transactionDto) {
         try {
-            TransactionResultDto result = transactionService.handleTopUpWithdrawal(transactionDto.getRfid(), transactionDto.getNominal(), transactionDto.getType(), transactionDto.getVirtual_tapcash_id(), transactionDto.getPin());
+            TransactionResultDto result = transactionService.handleTopUpWithdrawal(transactionDto.getCardId(), transactionDto.getNominal(), transactionDto.getType(), transactionDto.getVirtual_tapcash_id(), transactionDto.getPin());
             return ResponseEntity.ok(result.getMessage());
         } catch (ErrorTransaction | CardNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
