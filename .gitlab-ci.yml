@@ -2,12 +2,6 @@ stages:
   - build
   - deploy
 
-variables:
-  DOCKER_IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
-  HEROKU_APP_NAME: "your-heroku-app-name"
-  HEROKU_API_KEY:
-  # Add your Heroku API key as a protected variable in GitLab CI/CD settings
-
 services:
   - docker:dind
 
