@@ -36,9 +36,7 @@ public class Transaction {
     private MBankingAccount user;
 
     @ManyToOne
-    @JoinColumn(name = "rfid", referencedColumnName = "rfid")
+    @JoinColumn(name = "cardId", referencedColumnName = "cardId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private TapcashCard card;
-
-
 }

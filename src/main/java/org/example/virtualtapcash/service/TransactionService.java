@@ -5,9 +5,11 @@ package org.example.virtualtapcash.service;
 
 import org.example.virtualtapcash.dto.transaction.response.TransactionResultDto;
 import org.example.virtualtapcash.exception.transaction.ErrorTransaction;
+import org.example.virtualtapcash.model.ExternalSystemCard;
 import org.example.virtualtapcash.model.TapcashCard;
 import org.example.virtualtapcash.model.Transaction;
 import org.example.virtualtapcash.model.MBankingAccount;
+import org.example.virtualtapcash.repository.ExternalSystemCardJpaRepository;
 import org.example.virtualtapcash.repository.TapcashCardJpaRepository;
 import org.example.virtualtapcash.repository.TransactionJpaRepository;
 import org.example.virtualtapcash.repository.AccountJpaRepository;
@@ -34,21 +36,24 @@ public class TransactionService {
     private AccountJpaRepository accountJpaRepository;
 
     @Autowired
+    private ExternalSystemCardJpaRepository externalSystemCardJpaRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
 
-    public List<Transaction> getTransactionsByRfid(String rfid) throws CardNotFoundException {
-        List<Transaction> transactions = transactionJpaRepository.findTransactionsByRfid(rfid);
+    public List<Transaction> getTransactionByCardId(String cardId) throws CardNotFoundException {
+        List<Transaction> transactions = transactionJpaRepository.findTransactionsByCardId(cardId);
         if (transactions.isEmpty()) {
-            throw new CardNotFoundException("No Transactions Data Found for RFID: " + rfid);
+            throw new CardNotFoundException("No Transactions Data Found for Card ID: " + cardId);
         }
         return transactions;
     }
 
     @Transactional
-    public TransactionResultDto processPayment(String rfid, BigDecimal nominal) throws CardNotFoundException, InsufficientFundsException {
-        TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByRfid(rfid)
-                .orElseThrow(() -> new CardNotFoundException("Card not found with RFID: " + rfid));
+    public TransactionResultDto processPayment(String cardId, BigDecimal nominal) throws CardNotFoundException, InsufficientFundsException {
+        TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId)
+                .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
 
         BigDecimal minRequiredBalance = nominal.add(new BigDecimal("4000"));
         if (card.getTapCashBalance().compareTo(minRequiredBalance) <= 0) {
@@ -70,12 +75,15 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionResultDto handleTopUpWithdrawal(String rfid, BigDecimal nominal, String type, String virtualTapcashId, String pin) throws CardNotFoundException, ErrorTransaction {
-        TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByRfid(rfid)
-                .orElseThrow(() -> new CardNotFoundException("Card not found with RFID: " + rfid));
+    public TransactionResultDto handleTopUpWithdrawal(String cardId, BigDecimal nominal, String type, String virtualTapcashId, String pin) throws CardNotFoundException, ErrorTransaction {
+        TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId)
+                .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
 
         MBankingAccount mBankingAccount = accountJpaRepository.getUserByVirtualTapcashId(String.valueOf(virtualTapcashId))
                 .orElseThrow(() -> new CardNotFoundException("Card not found with Virtual Tapcash Id: " + virtualTapcashId));
+
+        ExternalSystemCard external = externalSystemCardJpaRepository.findTapcashCardsByCardId(cardId)
+                .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
 
         String savedPin = mBankingAccount.getPin();
         if (!passwordEncoder.matches(pin, savedPin)){
@@ -89,6 +97,7 @@ public class TransactionService {
             }
             mBankingAccount.setBankAccountBalance(mBankingAccount.getBankAccountBalance().subtract(nominal));
             card.setTapCashBalance(totalBalanceAfterTopUp);
+            external.setTapCashBalance(totalBalanceAfterTopUp);
         } else if ("WITHDRAW".equals(type)) {
             BigDecimal totalWithdraw = card.getTapCashBalance().subtract(nominal);
             if (totalWithdraw.compareTo(BigDecimal.ZERO) < 0) {
@@ -96,9 +105,11 @@ public class TransactionService {
             }
             mBankingAccount.setBankAccountBalance(mBankingAccount.getBankAccountBalance().add(nominal));
             card.setTapCashBalance(totalWithdraw);
+            external.setTapCashBalance((totalWithdraw));
         }
         accountJpaRepository.save(mBankingAccount);
         tapcashCardJpaRepository.save(card);
+        externalSystemCardJpaRepository.save(external);
 
         Transaction transaction = new Transaction();
         transaction.setCard(card);
@@ -110,7 +121,4 @@ public class TransactionService {
 
         return new TransactionResultDto(true, type + " successful");
     }
-
-
-
 }
