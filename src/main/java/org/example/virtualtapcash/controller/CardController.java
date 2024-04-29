@@ -50,10 +50,10 @@ public class CardController {
 
     }
 
-    @PatchMapping("/remove-card/{rfid}")
-    public ResponseEntity<?> removeCards(@PathVariable String rfid) {
+    @PatchMapping("/remove-card/{cardId}")
+    public ResponseEntity<?> removeCards(@PathVariable String cardId) {
         try {
-            return tapcashCardService.updateCard(rfid);
+            return tapcashCardService.updateCard(cardId);
         } catch (Exception e) {
             String errorMessage = "An error occurred while processing the request.";
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);

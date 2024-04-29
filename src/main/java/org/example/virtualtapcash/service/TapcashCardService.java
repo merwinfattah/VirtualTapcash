@@ -102,8 +102,8 @@ public class TapcashCardService {
     }
 
 
-    public ResponseEntity<?> updateCard(String rfid) {
-        Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByRfid(rfid);
+    public ResponseEntity<?> updateCard(String cardId) {
+        Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
         TapcashCard updatedCard = card.get();
 
         updatedCard.setStatus("Inactive");
