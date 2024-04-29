@@ -13,7 +13,6 @@ build_image:
     - docker build -t $DOCKER_IMAGE_TAG .
 
 deploy_to_heroku:
-  deploy_to_heroku:
   stage: deploy
   image: docker:latest
   script:
