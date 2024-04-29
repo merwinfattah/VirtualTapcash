@@ -19,6 +19,8 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
+    //Anything
+
     @Autowired
     private Environment env;
     private String SECRET = env.getProperty("jwt.secret");
