@@ -13,9 +13,10 @@ build_image:
     - docker build -t $DOCKER_IMAGE_TAG .
 
 deploy_to_heroku:
+  deploy_to_heroku:
   stage: deploy
-  image: heroku/heroku:latest
+  image: docker:latest
   script:
-    - docker run -d -p 8080:8080 -v $(pwd)/target/VirtualTapcash-0.0.1-SNAPSHOT.jar:/app/VirtualTapcash.jar $DOCKER_IMAGE_TAG
+    - /usr/bin/docker run -d -p 8080:8080 -v $(pwd)/target/VirtualTapcash-0.0.1-SNAPSHOT.jar:/app/VirtualTapcash.jar $DOCKER_IMAGE_TAG
   only:
     - master  # Adjust the branch name as needed
