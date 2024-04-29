@@ -7,17 +7,15 @@ services:
 
 build_image:
   stage: build
-  image: docker:latest
+  image: maven:latest
   script:
-    - echo "$HEROKU_API_KEY" | docker login --username=_ --password-stdin registry.heroku.com
+    - mvn clean package  # Build the JAR file
     - docker build -t $DOCKER_IMAGE_TAG .
-    - docker push $DOCKER_IMAGE_TAG
 
 deploy_to_heroku:
   stage: deploy
-  image: ruby:latest
+  image: docker:latest
   script:
-    - gem install dpl
-    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+    - docker run -d -p 8080:8080 -v $(pwd)/target/VirtualTapcash-0.0.1-SNAPSHOT.jar:/app/VirtualTapcash.jar $DOCKER_IMAGE_TAG
   only:
     - master  # Adjust the branch name as needed
