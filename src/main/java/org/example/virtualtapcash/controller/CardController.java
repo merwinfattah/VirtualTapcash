@@ -1,6 +1,7 @@
 package org.example.virtualtapcash.controller;
 
 import org.example.virtualtapcash.dto.card.request.AddCardDto;
+import org.example.virtualtapcash.dto.card.request.RemoveCardDto;
 import org.example.virtualtapcash.service.TapcashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,10 +51,10 @@ public class CardController {
 
     }
 
-    @PatchMapping("/remove-card/{cardId}")
-    public ResponseEntity<?> removeCards(@PathVariable String cardId) {
+    @PatchMapping("/remove-card")
+    public ResponseEntity<?> removeCard(@RequestBody RemoveCardDto request) {
         try {
-            return tapcashCardService.updateCard(cardId);
+            return tapcashCardService.updateCard(request.getCardId());
         } catch (Exception e) {
             String errorMessage = "An error occurred while processing the request.";
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
