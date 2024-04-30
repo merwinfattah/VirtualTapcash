@@ -43,7 +43,6 @@ public class SecurityConfig {
 
 
         return http
-                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/card/get-card/**", "api/v1/transaction/payment").permitAll()
                         .requestMatchers("/api/v1/auth/hello", "/api/v1/account/get-user-data/**", "/api/v1/account/authorize-qr", "/api/v1/card/get-cards-data/**", "/api/v1/card/add-card", "/api/v1/card/remove-card/", "/api/v1/transaction/get-transaction-data/**", "api/v1/transaction/top-up-n-withdraw").authenticated()
@@ -54,17 +53,6 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Requestor-Type","Content-Type"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 
     @Bean

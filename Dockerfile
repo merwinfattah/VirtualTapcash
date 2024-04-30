@@ -11,6 +11,5 @@ COPY target/VirtualTapcash-0.0.1-SNAPSHOT.jar /app/VirtualTapcash.jar
 EXPOSE 8080
 
 # Specify the command to run your application
-RUN adduser -D miracle
-USER miracle
+
 CMD ["java", "-jar", "VirtualTapcash.jar"]
