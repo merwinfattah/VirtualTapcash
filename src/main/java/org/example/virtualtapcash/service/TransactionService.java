@@ -23,6 +23,7 @@ import org.example.virtualtapcash.exception.transaction.InsufficientFundsExcepti
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransactionService {
@@ -64,6 +65,7 @@ public class TransactionService {
         }
 
         card.setTapCashBalance(card.getTapCashBalance().subtract(nominal));
+        card.setUpdatedAt(new Date());
         external.setTapCashBalance(external.getTapCashBalance().subtract(nominal));
         tapcashCardJpaRepository.save(card);
         externalSystemCardJpaRepository.save(external);
@@ -102,6 +104,7 @@ public class TransactionService {
             }
             mBankingAccount.setBankAccountBalance(mBankingAccount.getBankAccountBalance().subtract(nominal));
             card.setTapCashBalance(totalBalanceAfterTopUp);
+            card.setUpdatedAt(new Date());
             external.setTapCashBalance(totalBalanceAfterTopUp);
         } else if ("WITHDRAW".equals(type)) {
             BigDecimal totalWithdraw = card.getTapCashBalance().subtract(nominal);
@@ -110,6 +113,7 @@ public class TransactionService {
             }
             mBankingAccount.setBankAccountBalance(mBankingAccount.getBankAccountBalance().add(nominal));
             card.setTapCashBalance(totalWithdraw);
+            card.setUpdatedAt(new Date());
             external.setTapCashBalance((totalWithdraw));
         }
         accountJpaRepository.save(mBankingAccount);
