@@ -13,14 +13,11 @@ build:
   script:
     - docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
     - docker push registry.heroku.com/$HEROKU_APP_NAME/web
-  tags:
-    - miracle-3  # This tag ensures only the 'miracle-3' runner picks up this job
+
 
 deploy:
   stage: deploy
   script:
     - docker run --rm -e SPRING_DATASOURCE_URL=$DB_URL -e SPRING_DATASOURCE_USERNAME=$DB_USERNAME -e SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD -e HEROKU_API_KEY=$HEROKU_API_KEY heroku/heroku:18 container:release web -a $HEROKU_APP_NAME
-  tags:
-    - miracle-3  # This tag ensures only the 'miracle-3' runner picks up this job
   only:
     - master  # Adjust this as necessary, for instance, if you want to deploy from a different branch
