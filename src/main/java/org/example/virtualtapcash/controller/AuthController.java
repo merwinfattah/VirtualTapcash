@@ -44,11 +44,13 @@ public class AuthController {
                 String token = jwtService.generateToken(authDto.getUsername());
                 return ResponseEntity.ok(token);
             } else {
-                throw new BadCredentialsException("Authentication failed for user: " + authDto.getUsername());
+                String message = "Authentication failed for user: " + authDto.getUsername();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
             }
         } catch (AuthenticationException e) {
             // Log the authentication exception for debugging
-            throw new BadCredentialsException("Authentication failed for user: " + authDto.getUsername());
+            String message = "Authentication failed for user: " + authDto.getUsername();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
         }
     }
 
