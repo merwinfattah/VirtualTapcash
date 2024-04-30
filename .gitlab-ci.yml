@@ -2,20 +2,22 @@ stages:
   - build
   - deploy
 
-services:
-  - docker:dind
+variables:
+  DOCKER_DRIVER: overlay2
 
-build_image:
+before_script:
+  - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+
+build:
   stage: build
-  image: maven:latest
   script:
-    - mvn clean package  # Build the JAR file
-    - docker build -t $DOCKER_IMAGE_TAG .
+    - docker build -t registry.heroku.com/$HEROKU_APP_NAME/web .
+    - docker push registry.heroku.com/$HEROKU_APP_NAME/web
 
-deploy_to_heroku:
+deploy:
   stage: deploy
-  image: docker:latest
   script:
-    - /usr/bin/docker run -d -p 8080:8080 -v $(pwd)/target/VirtualTapcash-0.0.1-SNAPSHOT.jar:/app/VirtualTapcash.jar $DOCKER_IMAGE_TAG
+    - docker run --rm -e SPRING_DATASOURCE_URL=$DB_URL -e SPRING_DATASOURCE_USERNAME=$DB_USERNAME -e SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD -e HEROKU_API_KEY=$HEROKU_API_KEY heroku/heroku:18 container:release web -a $HEROKU_APP_NAME
   only:
-    - master  # Adjust the branch name as needed
+    - master  # Adjust this as necessary, for instance, if you want to deploy from a different branch
+

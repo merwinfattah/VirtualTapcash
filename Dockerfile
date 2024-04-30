@@ -5,10 +5,12 @@ FROM openjdk:17-alpine
 WORKDIR /app
 
 # Copy the JAR file built by Maven to the container
-COPY ../target/VirtualTapcash-0.0.1-SNAPSHOT.jar /app/VirtualTapcash.jar
+COPY target/VirtualTapcash-0.0.1-SNAPSHOT.jar /app/VirtualTapcash.jar
 
 # Expose the port your application runs on
 EXPOSE 8080
 
 # Specify the command to run your application
+RUN adduser -D miracle
+USER miracle
 CMD ["java", "-jar", "VirtualTapcash.jar"]
