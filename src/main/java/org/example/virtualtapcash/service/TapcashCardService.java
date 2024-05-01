@@ -28,55 +28,99 @@ public class TapcashCardService {
 
     public ResponseEntity<?> registerCard(String cardId, String virtualTapcashId) {
 
-            if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && tapcashCardJpaRepository.isCardActive(cardId)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Card with ID " + cardId + " is already registered.");
-            }
+        if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && tapcashCardJpaRepository.isCardActive(cardId)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Card with ID " + cardId + " is already registered.");
+        }
 
-            if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && !tapcashCardJpaRepository.isCardActive(cardId)) {
+        if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && !tapcashCardJpaRepository.isCardActive(cardId)) {
 
-                String cardName = generateVirtualTapcashName(virtualTapcashId);
+            String cardName = generateVirtualTapcashName(virtualTapcashId);
 
-                tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId);
 
-                String message = "Card Successfully Registered";
+            String message = "Card Successfully Registered";
 
-                return ResponseEntity.status(HttpStatus.CREATED).body(message);
+            return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
-            }
+        }
 
-            Optional<ExternalSystemCard> relatedCard = externalSystemCardService.getCardById(cardId);
+        Optional<ExternalSystemCard> relatedCard = externalSystemCardService.getCardById(cardId);
 
-            if (relatedCard.isPresent()) {
+        if (relatedCard.isPresent()) {
 
-                TapcashCard newCard = new TapcashCard();
+            TapcashCard newCard = new TapcashCard();
 
-                if (tapcashCardJpaRepository.isThereCardSetToDefaultByVirtualTapcashId(virtualTapcashId)) {
-                    newCard.setIsDefault(false);
-                } else {
-                    newCard.setIsDefault(true);
-                }
-
-                Optional<MBankingAccount> user = accountJpaRepository.findMBankingAccountByVirtualTapCashId(virtualTapcashId);
-
-                String cardName = generateVirtualTapcashName(virtualTapcashId);
-
-                newCard.setCardId(cardId);
-                newCard.setRegisteredAt(new Date());
-                newCard.setUpdatedAt(new Date());
-                newCard.setRfid(relatedCard.get().getRfid());
-                newCard.setTapCashBalance(relatedCard.get().getTapCashBalance());
-                newCard.setStatus("Active");
-                newCard.setUser(user.get());
-                newCard.setCardName(cardName);
-                tapcashCardJpaRepository.save(newCard);
-
-                return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
+            if (tapcashCardJpaRepository.isThereCardSetToDefaultByVirtualTapcashId(virtualTapcashId)) {
+                newCard.setIsDefault(false);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card Have Not  Registered Yet On BNI System");
+                newCard.setIsDefault(true);
             }
+
+            Optional<MBankingAccount> user = accountJpaRepository.findMBankingAccountByVirtualTapCashId(virtualTapcashId);
+
+            String cardName = generateVirtualTapcashName(virtualTapcashId);
+
+            newCard.setCardId(cardId);
+            newCard.setRegisteredAt(new Date());
+            newCard.setUpdatedAt(new Date());
+            newCard.setRfid(relatedCard.get().getRfid());
+            newCard.setTapCashBalance(relatedCard.get().getTapCashBalance());
+            newCard.setStatus("Active");
+            newCard.setUser(user.get());
+            newCard.setCardName(cardName);
+            tapcashCardJpaRepository.save(newCard);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card Have Not  Registered Yet On BNI System");
+        }
 
 
     }
+
+    public ResponseEntity<?> registerCardV2(String rfid, String virtualTapcashId) {
+        if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Card with RFID " + rfid + " is already registered and active.");
+        }
+
+        if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && !tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
+            String cardName = generateVirtualTapcashName(virtualTapcashId);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Card Successfully Reactivated and Registered.");
+        }
+
+        Optional<ExternalSystemCard> relatedCard = externalSystemCardService.getCardByRfid(rfid);
+
+        if (relatedCard.isPresent()) {
+
+            TapcashCard newCard = new TapcashCard();
+
+            if (tapcashCardJpaRepository.isThereCardSetToDefaultByVirtualTapcashId(virtualTapcashId)) {
+                newCard.setIsDefault(false);
+            } else {
+                newCard.setIsDefault(true);
+            }
+
+            Optional<MBankingAccount> user = accountJpaRepository.findMBankingAccountByVirtualTapCashId(virtualTapcashId);
+
+            String cardName = generateVirtualTapcashName(virtualTapcashId);
+
+            newCard.setCardId(relatedCard.get().getCardId());
+            newCard.setRegisteredAt(new Date());
+            newCard.setUpdatedAt(new Date());
+            newCard.setRfid(rfid);
+            newCard.setTapCashBalance(relatedCard.get().getTapCashBalance());
+            newCard.setStatus("Active");
+            newCard.setUser(user.get());
+            newCard.setCardName(cardName);
+            tapcashCardJpaRepository.save(newCard);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card Have Not  Registered Yet On BNI System");
+        }
+    }
+
 
 
     public ResponseEntity<?> getAllCard(String virtualTapCashId) {
@@ -151,5 +195,4 @@ public class TapcashCardService {
 
         return cardName;
     }
-
 }

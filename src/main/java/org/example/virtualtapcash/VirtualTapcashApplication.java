@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-public class VirtualTapcashApplication {
+public class    VirtualTapcashApplication {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
