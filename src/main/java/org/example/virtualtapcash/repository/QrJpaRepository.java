@@ -26,5 +26,6 @@ public interface QrJpaRepository extends JpaRepository<QR, Long> {
     @Query("SELECT q FROM QR q WHERE q.card.cardId = :cardId AND (q.isActive IS NULL OR q.isActive = false)")
     List<QR> findInactiveOrNullQRCodesByCardId(@Param("cardId") String cardId);
 
-
+    @Query("SELECT q FROM QR q WHERE q.card.user.username = :username")
+    List<QR> findByUser(@Param("username") String username);
 }

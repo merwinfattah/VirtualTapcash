@@ -63,6 +63,16 @@ public class QrService {
     }
 
     @Transactional
+    public void deactivateQrCodesForUser(String username) {
+        // Assuming that each QR code is linked to a user (possibly via a card)
+        List<QR> userQRCodes = qrJpaRepository.findByUser(username); // Modify this method based on your model
+        for (QR qr : userQRCodes) {
+            qr.setIsActive(false);
+            qrJpaRepository.save(qr);
+        }
+    }
+
+    @Transactional
     public boolean deactivateQrCodeByCardIdImmediately(String cardId) {
         QR qr = qrJpaRepository.findActiveQRCodeByCardId(cardId);
         if (qr != null && qr.getIsActive()) {
