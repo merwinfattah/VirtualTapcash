@@ -36,7 +36,7 @@ public class TapcashCardService {
 
             String cardName = generateVirtualTapcashName(virtualTapcashId);
 
-            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, true);
 
             String message = "Card Successfully Registered";
 
@@ -155,6 +155,13 @@ public class TapcashCardService {
         updatedCard.setIsDefault(false);
 
         tapcashCardJpaRepository.save(updatedCard);
+
+        List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(updatedCard.getUser().getVirtualTapCashId());
+        if (!changeDefault.isEmpty()) {
+            TapcashCard firstCard = changeDefault.get(0);
+            firstCard.setIsDefault(true);
+            tapcashCardJpaRepository.save(firstCard);
+        }
 
         List<TapcashCard> cardList = tapcashCardJpaRepository.findAllByOrderByCardNameAsc();
         if (!cardList.isEmpty()) {
