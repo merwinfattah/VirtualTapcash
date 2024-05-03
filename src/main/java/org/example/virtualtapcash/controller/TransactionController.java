@@ -75,19 +75,21 @@ public class TransactionController {
     }
 
 
-    @PostMapping("/qrpayment/{cardId}")
-    public ResponseEntity<?> qrPayment(@PathVariable String cardId, @RequestBody PaymentDto paymentDto) {
+    @PostMapping("/qrpayment")
+    public ResponseEntity<?> qrPayment(@RequestBody PaymentDto paymentDto) {
         try {
-            // Check if there's an active QR code for the card
+            // Use cardId from the PaymentDto to check for an active QR code
+            String cardId = paymentDto.getCardId();
             boolean isActive = qrService.checkIsActiveByCardId(cardId);
+
             if (!isActive) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No active QR Code associated with this card or QR Code is not found.");
             }
 
             // Proceed with payment
-            TransactionResultDto result = transactionService.processPayment(paymentDto.getCardId(), paymentDto.getNominal());
+            TransactionResultDto result = transactionService.processPayment(cardId, paymentDto.getNominal());
 
-            // Deactivate the QR code immediately after successful transaction
+            // Deactivate the QR code immediately after a successful transaction
             qrService.deactivateQrCodeByCardId(cardId);
 
             return ResponseEntity.ok(result.getMessage());
@@ -99,8 +101,6 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the transaction.");
         }
     }
-
-
 
 
     @PostMapping("/top-up-n-withdraw")
