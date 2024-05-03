@@ -19,7 +19,7 @@ public interface TapcashCardJpaRepository extends JpaRepository<TapcashCard, Str
 
     Optional <TapcashCard> findTapcashCardsByCardId(String cardId);
 
-    @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND is_default = false AND status = 'Active' ORDER BY created_at DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND is_default = false AND status = 'Active' ORDER BY updated_at DESC", nativeQuery = true)
     List<TapcashCard> changeIsDefault(String virtualTapcashId);
 
 
