@@ -102,6 +102,12 @@ public class TransactionService {
             if (totalBalanceAfterTopUp.compareTo(BigDecimal.valueOf(2000000)) > 0) {
                 throw new ErrorTransaction("Top-up amount exceeds maximum limit.");
             }
+
+            BigDecimal bankAccountBalanceAfterTopUp = mBankingAccount.getBankAccountBalance().subtract(nominal);
+            if (bankAccountBalanceAfterTopUp.compareTo(BigDecimal.ZERO) < 0) {
+                throw new ErrorTransaction("Bank account balance is insufficient.");
+            }
+
             mBankingAccount.setBankAccountBalance(mBankingAccount.getBankAccountBalance().subtract(nominal));
             card.setTapCashBalance(totalBalanceAfterTopUp);
             card.setUpdatedAt(new Date());
