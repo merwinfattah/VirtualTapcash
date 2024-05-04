@@ -1,15 +1,15 @@
-# Use OpenJDK 17 as the base image
-FROM openjdk:17-alpine
-
-# Set the working directory in the container
+# Stage 1: Build stage
+FROM openjdk:17-alpine AS build
 WORKDIR /app
-
-# Copy the JAR file built by Maven to the container
 COPY target/VirtualTapcash-0.0.1-SNAPSHOT.jar /app/VirtualTapcash.jar
-
-# Expose the port your application runs on
 EXPOSE 8080
 
-# Specify the command to run your application
+# Stage 2: Runtime stage
+FROM openjdk:17-alpine
+ARG PORT
+ENV PORT=${PORT}
+COPY --from=build /app/VirtualTapcash.jar .
+RUN adduser -D runtime
+USER runtime
+ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "VirtualTapcash.jar"]
 
-CMD ["java", "-jar", "VirtualTapcash.jar"]
