@@ -29,19 +29,43 @@ public class TapcashCardService {
     public ResponseEntity<?> registerCard(String cardId, String virtualTapcashId) {
 
         if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && tapcashCardJpaRepository.isCardActive(cardId)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Card with ID " + cardId + " is already registered.");
+
+            String cardName = generateVirtualTapcashName(virtualTapcashId);
+
+            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
+
+            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, true);
+
+            String message = "Card Successfully Registered Again";
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(message);
         }
 
         if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && !tapcashCardJpaRepository.isCardActive(cardId)) {
 
             String cardName = generateVirtualTapcashName(virtualTapcashId);
 
-            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId);
+            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
+
+            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, true);
 
             String message = "Card Successfully Registered";
 
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
 
+        }
+
+        Optional<TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
+        TapcashCard updatedCard = card.get();
+
+        List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(updatedCard.getUser().getVirtualTapCashId());
+        if (!changeDefault.isEmpty()) {
+            for (TapcashCard tapcashCard : changeDefault) {
+                tapcashCard.setIsDefault(false);
+            }
+            TapcashCard firstCard = changeDefault.get(1);
+            firstCard.setIsDefault(true);
+            tapcashCardJpaRepository.saveAll(changeDefault);
         }
 
         Optional<ExternalSystemCard> relatedCard = externalSystemCardService.getCardById(cardId);
@@ -68,6 +92,8 @@ public class TapcashCardService {
             newCard.setStatus("Active");
             newCard.setUser(user.get());
             newCard.setCardName(cardName);
+            newCard.setIsDefault(true);
+
             tapcashCardJpaRepository.save(newCard);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
@@ -80,12 +106,16 @@ public class TapcashCardService {
 
     public ResponseEntity<?> registerCardV2(String rfid, String virtualTapcashId) {
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Card with RFID " + rfid + " is already registered and active.");
+            String cardName = generateVirtualTapcashName(virtualTapcashId);
+            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Card Successfully Reactivated and Registered.");
         }
 
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && !tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
             String cardName = generateVirtualTapcashName(virtualTapcashId);
-            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid);
+            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true);
             return ResponseEntity.status(HttpStatus.CREATED).body("Card Successfully Reactivated and Registered.");
         }
 
@@ -113,6 +143,7 @@ public class TapcashCardService {
             newCard.setStatus("Active");
             newCard.setUser(user.get());
             newCard.setCardName(cardName);
+            newCard.setIsDefault(true);
             tapcashCardJpaRepository.save(newCard);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
@@ -155,6 +186,13 @@ public class TapcashCardService {
         updatedCard.setIsDefault(false);
 
         tapcashCardJpaRepository.save(updatedCard);
+
+        List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(updatedCard.getUser().getVirtualTapCashId());
+        if (!changeDefault.isEmpty()) {
+            TapcashCard firstCard = changeDefault.get(0);
+            firstCard.setIsDefault(true);
+            tapcashCardJpaRepository.save(firstCard);
+        }
 
         List<TapcashCard> cardList = tapcashCardJpaRepository.findAllByOrderByCardNameAsc();
         if (!cardList.isEmpty()) {
