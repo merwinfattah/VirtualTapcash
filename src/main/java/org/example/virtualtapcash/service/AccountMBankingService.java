@@ -26,22 +26,4 @@ public class AccountMBankingService {
         }
     }
 
-
-    public ApiResponseDto verifyQr(Long userId, String pin) {
-        Optional<MBankingAccount> accountOptional = accountJpaRepository.findById(userId);
-        if (accountOptional.isPresent()) {
-            String hashedPin = encoder.encode(pin);
-            if (accountOptional.get().getPin().equals(hashedPin)) {
-                return new ApiResponseDto("success", accountOptional.get(), "QR verified successfully");
-            } else {
-                return new ApiResponseDto("error", null, "Wrong pin number");
-            }
-        } else {
-            return new ApiResponseDto("error", null, "Account not found");
-        }
-    }
-
-
-
-
 }

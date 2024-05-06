@@ -1,6 +1,9 @@
 package org.example.virtualtapcash.security;
 
 import org.example.virtualtapcash.dto.account.request.AccountRegisterDto;
+import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
+import org.example.virtualtapcash.exception.account.AccountRegisteredException;
+import org.example.virtualtapcash.exception.account.BadCredentialException;
 import org.example.virtualtapcash.model.MBankingAccount;
 import org.example.virtualtapcash.repository.AccountJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,7 +46,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userDetail.map(UserInfoDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
     }
-    public String addUser(AccountRegisterDto userInfo) {
+    public ApiResponseDto addUser(AccountRegisterDto userInfo) throws BadCredentialException, AccountRegisteredException {
         if (userInfo.getPin() != null) {
             if (!accountJpaRepository.existsByUsername(userInfo.getUsername())) {
                 MBankingAccount newUser = new MBankingAccount();
@@ -63,13 +66,16 @@ public class CustomUserDetailsService implements UserDetailsService {
                 newUser.setRole("USER");
 
                 accountJpaRepository.save(newUser);
-                return "User Added Successfully";
+
+                String message = "User Added Successfully";
+
+                return new ApiResponseDto("success", newUser, message);
             }
 
-            return  "Username has been used";
+            throw new AccountRegisteredException("Username has been used");
 
         } else {
-            return "Invalid password provided";
+            throw new BadCredentialException("Invalid password provided");
         }
     }
 

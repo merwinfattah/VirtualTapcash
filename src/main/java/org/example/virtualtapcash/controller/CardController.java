@@ -5,6 +5,10 @@ import org.example.virtualtapcash.dto.card.request.AddCardV2Dto;
 import org.example.virtualtapcash.dto.card.request.ChangeCardDto;
 import org.example.virtualtapcash.dto.card.request.RemoveCardDto;
 import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
+import org.example.virtualtapcash.exception.account.AccountNotFoundException;
+import org.example.virtualtapcash.exception.account.BadCredentialException;
+import org.example.virtualtapcash.exception.card.CardNotFoundException;
+import org.example.virtualtapcash.exception.card.CardRegisteredException;
 import org.example.virtualtapcash.service.TapcashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
@@ -24,9 +28,10 @@ public class CardController {
     public ResponseEntity<ApiResponseDto> getCardsData(@PathVariable String virtualTapCashId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.getAllCard(virtualTapCashId));
+        } catch(CardNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
     }
 
@@ -34,9 +39,10 @@ public class CardController {
     public ResponseEntity<ApiResponseDto> getOneCard(@PathVariable String cardId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.getOneCard(cardId));
+        } catch (CardNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
     }
 
@@ -44,9 +50,12 @@ public class CardController {
     public ResponseEntity<ApiResponseDto> addCard(@RequestBody AddCardDto request) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(tapcashCardService.registerCard(request.getCardId(), request.getVirtualTapcashId()));
+        } catch (CardRegisteredException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto("error", null, e.getMessage()));
+        } catch (CardNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
     }
 
@@ -54,9 +63,12 @@ public class CardController {
     public ResponseEntity<ApiResponseDto> addCardV2(@RequestBody AddCardV2Dto addCardV2Dto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(tapcashCardService.registerCardV2(addCardV2Dto.getRfid(), addCardV2Dto.getVirtualTapcashId()));
+        } catch (CardRegisteredException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto("error", null, e.getMessage()));
+        } catch (CardNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
     }
 
@@ -64,6 +76,10 @@ public class CardController {
     public ResponseEntity<ApiResponseDto> removeCard(@RequestBody RemoveCardDto request) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.updateCard(request.getUserId(), request.getCardId(), request.getPin()));
+        } catch (BadCredentialException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("error", null, e.getMessage()));
+        } catch (AccountNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
@@ -75,8 +91,7 @@ public class CardController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.changeCard(request.getCardId()));
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
     }
 

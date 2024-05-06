@@ -24,21 +24,11 @@ public class    AccountController {
         try {
             String jwtToken = token.substring(7);
             String username = jwtService.extractUsername(jwtToken);
-            return ResponseEntity.ok(accountMBankingService.getUserByUsername(username));
+            return ResponseEntity.status(HttpStatus.OK).body(accountMBankingService.getUserByUsername(username));
         } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
     }
 
-    @PostMapping("/authorize-qr")
-    public ResponseEntity<ApiResponseDto> authorizeQr(@RequestBody AuthorizeQrDto request) {
-        try {
-            return ResponseEntity.ok(accountMBankingService.verifyQr(request.getUserId(), request.getPin()));
-        } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
-        }
-    }
 
 }

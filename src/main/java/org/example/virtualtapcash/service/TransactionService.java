@@ -3,6 +3,7 @@ package org.example.virtualtapcash.service;
 
 
 
+import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
 import org.example.virtualtapcash.dto.transaction.response.TransactionResultDto;
 import org.example.virtualtapcash.exception.transaction.ErrorTransaction;
 import org.example.virtualtapcash.model.ExternalSystemCard;
@@ -43,16 +44,17 @@ public class TransactionService {
     private PasswordEncoder passwordEncoder;
 
 
-    public List<Transaction> getTransactionByCardId(String cardId) throws CardNotFoundException {
+    public ApiResponseDto getTransactionByCardId(String cardId) throws CardNotFoundException {
         List<Transaction> transactions = transactionJpaRepository.findTransactionsByCardId(cardId);
         if (transactions.isEmpty()) {
             throw new CardNotFoundException("No Transactions Data Found for Card ID: " + cardId);
+
         }
-        return transactions;
+        return new ApiResponseDto("success", transactions, "Transactions Retrieved Successfully");
     }
 
     @Transactional
-    public TransactionResultDto processPayment(String cardId, BigDecimal nominal) throws CardNotFoundException, InsufficientFundsException {
+    public ApiResponseDto processPayment(String cardId, BigDecimal nominal) throws CardNotFoundException, InsufficientFundsException {
         TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId)
                 .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
 
@@ -78,11 +80,11 @@ public class TransactionService {
         transaction.setType("PAYMENT");
         transactionJpaRepository.save(transaction);
 
-        return new TransactionResultDto(true, "Payment successful");
+        return new ApiResponseDto("success", transaction, "Payment successful");
     }
 
     @Transactional
-    public TransactionResultDto handleTopUpWithdrawal(String cardId, BigDecimal nominal, String type, String virtualTapcashId, String pin) throws CardNotFoundException, ErrorTransaction {
+    public ApiResponseDto handleTopUpWithdrawal(String cardId, BigDecimal nominal, String type, String virtualTapcashId, String pin) throws CardNotFoundException, ErrorTransaction {
         TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId)
                 .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
 
@@ -93,6 +95,7 @@ public class TransactionService {
                 .orElseThrow(() -> new CardNotFoundException("Card not found with Card ID: " + cardId));
 
         String savedPin = mBankingAccount.getPin();
+        String message = "";
         if (!passwordEncoder.matches(pin, savedPin)){
             throw new ErrorTransaction("Invalid PIN");
         }
@@ -112,6 +115,7 @@ public class TransactionService {
             card.setTapCashBalance(totalBalanceAfterTopUp);
             card.setUpdatedAt(new Date());
             external.setTapCashBalance(totalBalanceAfterTopUp);
+            message = "TOPUP";
         } else if ("WITHDRAW".equals(type)) {
             BigDecimal totalWithdraw = card.getTapCashBalance().subtract(nominal);
             if (totalWithdraw.compareTo(BigDecimal.ZERO) < 0) {
@@ -121,6 +125,7 @@ public class TransactionService {
             card.setTapCashBalance(totalWithdraw);
             card.setUpdatedAt(new Date());
             external.setTapCashBalance((totalWithdraw));
+            message = "WITHDRAW";
         }
         accountJpaRepository.save(mBankingAccount);
         tapcashCardJpaRepository.save(card);
@@ -134,6 +139,6 @@ public class TransactionService {
         transaction.setType(type);
         transactionJpaRepository.save(transaction);
 
-        return new TransactionResultDto(true, type + " successful");
+        return new ApiResponseDto("success", transaction, message);
     }
 }
