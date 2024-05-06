@@ -3,6 +3,8 @@ package org.example.virtualtapcash.controller;
 import org.example.virtualtapcash.dto.account.request.AccountRegisterDto;
 import org.example.virtualtapcash.dto.account.request.AuthDto;
 import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
+import org.example.virtualtapcash.exception.account.AccountRegisteredException;
+import org.example.virtualtapcash.exception.account.BadCredentialException;
 import org.example.virtualtapcash.security.CustomUserDetailsService;
 import org.example.virtualtapcash.service.JwtService;
 import org.example.virtualtapcash.service.QrService;
@@ -33,9 +35,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> addNewUser(@RequestBody AccountRegisterDto userInfo) {
-        String response = service.addUser(userInfo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<ApiResponseDto> addNewUser(@RequestBody AccountRegisterDto userInfo) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.addUser(userInfo));
+        } catch (BadCredentialException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("error", null, e.getMessage()));
+        } catch (AccountRegisteredException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto("error", null, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
+        }
+
     }
 
     @PostMapping("/login")
@@ -50,14 +60,15 @@ public class AuthController {
 
                 return ResponseEntity.ok(new ApiResponseDto("success", token, "login successfully"));
             } else {
-                String errorMessage = "Authentication failed for user: " + authDto.getUsername();
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto("error", null, errorMessage));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto("error", null, "Invalid credentials"));
             }
         } catch (AuthenticationException e) {
             // Log the authentication exception for debugging
-            String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto("error", null, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
+
     }
 
 }
