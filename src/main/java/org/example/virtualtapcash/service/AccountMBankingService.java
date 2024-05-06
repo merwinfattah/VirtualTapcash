@@ -1,10 +1,9 @@
 package org.example.virtualtapcash.service;
 
+import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
 import org.example.virtualtapcash.model.MBankingAccount;
 import org.example.virtualtapcash.repository.AccountJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,22 +17,27 @@ public class AccountMBankingService {
     @Autowired
     private PasswordEncoder encoder;
 
-    public ResponseEntity<?> getUserByUsername(String username) {
-        Optional<MBankingAccount> response = accountJpaRepository.findByUsername(username);
-        if(response.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ApiResponseDto getUserByUsername(String username) {
+        Optional<MBankingAccount> accountOptional = accountJpaRepository.findByUsername(username);
+        if (accountOptional.isPresent()) {
+            return new ApiResponseDto("success", accountOptional.get(), "User found");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
+            return new ApiResponseDto("error", null, "Account not found");
         }
     }
 
-    public ResponseEntity<?> verifyQr(Long userId, String pin) {
-        Optional<MBankingAccount> response = accountJpaRepository.findById(userId);
-        String hashedPin = encoder.encode(pin);
-        if (response.get().getPin().equals(hashedPin)) {
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    public ApiResponseDto verifyQr(Long userId, String pin) {
+        Optional<MBankingAccount> accountOptional = accountJpaRepository.findById(userId);
+        if (accountOptional.isPresent()) {
+            String hashedPin = encoder.encode(pin);
+            if (accountOptional.get().getPin().equals(hashedPin)) {
+                return new ApiResponseDto("success", accountOptional.get(), "QR verified successfully");
+            } else {
+                return new ApiResponseDto("error", null, "Wrong pin number");
+            }
         } else {
-            return  ResponseEntity.status(HttpStatus.CONFLICT).body("Wrong pin number");
+            return new ApiResponseDto("error", null, "Account not found");
         }
     }
 

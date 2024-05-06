@@ -1,5 +1,6 @@
 package org.example.virtualtapcash.service;
 
+import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
 import org.example.virtualtapcash.model.ExternalSystemCard;
 import org.example.virtualtapcash.model.MBankingAccount;
 import org.example.virtualtapcash.model.TapcashCard;
@@ -26,7 +27,7 @@ public class TapcashCardService {
     @Autowired
     AccountJpaRepository accountJpaRepository;
 
-    public ResponseEntity<?> registerCard(String cardId, String virtualTapcashId) {
+    public ApiResponseDto registerCard(String cardId, String virtualTapcashId) {
 
         if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && tapcashCardJpaRepository.isCardActive(cardId)) {
 
@@ -38,7 +39,7 @@ public class TapcashCardService {
 
             String message = "Card Successfully Registered Again";
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+            return new ApiResponseDto("success", null, message);
         }
 
         if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && !tapcashCardJpaRepository.isCardActive(cardId)) {
@@ -51,7 +52,7 @@ public class TapcashCardService {
 
             String message = "Card Successfully Registered";
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+            return new ApiResponseDto("success", null, message);
 
         }
 
@@ -96,27 +97,34 @@ public class TapcashCardService {
 
             tapcashCardJpaRepository.save(newCard);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
+            String message = "Card Successfully Registered";
+
+            return new ApiResponseDto("success", newCard, message);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card Have Not  Registered Yet On BNI System");
+            String errorMessage = "Card Have Not  Registered Yet On BNI System";
+            return new ApiResponseDto("error", null, errorMessage);
         }
 
 
     }
 
-    public ResponseEntity<?> registerCardV2(String rfid, String virtualTapcashId) {
+    public ApiResponseDto registerCardV2(String rfid, String virtualTapcashId) {
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
             String cardName = generateVirtualTapcashName(virtualTapcashId);
             tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
             tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Card Successfully Reactivated and Registered.");
+            String message = "Card Successfully Registered Again";
+
+            return new ApiResponseDto("success", null, message);
         }
 
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && !tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
             String cardName = generateVirtualTapcashName(virtualTapcashId);
             tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
             tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Card Successfully Reactivated and Registered.");
+            String message = "Card Successfully Registered Again";
+
+            return new ApiResponseDto("success", null, message);
         }
 
         Optional<ExternalSystemCard> relatedCard = externalSystemCardService.getCardByRfid(rfid);
@@ -146,38 +154,43 @@ public class TapcashCardService {
             newCard.setIsDefault(true);
             tapcashCardJpaRepository.save(newCard);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(newCard);
+            String message = "Card Successfully Registered";
+
+            return new ApiResponseDto("success", newCard, message);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card Have Not  Registered Yet On BNI System");
+            String errorMessage = "Card Have Not  Registered Yet On BNI System";
+            return new ApiResponseDto("error", null, errorMessage);
         }
     }
 
 
 
-    public ResponseEntity<?> getAllCard(String virtualTapCashId) {
+    public ApiResponseDto getAllCard(String virtualTapCashId) {
 
         List<TapcashCard> cardsData = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashId(virtualTapCashId, "Active");
         if (!cardsData.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK).body(cardsData);
+            String message = "cards data retrieved successfully";
+            return new ApiResponseDto("success", cardsData, message);
         } else {
-            String stringMessage = "No Cards Found for Virtual Tapcash ID: " + virtualTapCashId;
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(stringMessage);
+            String errorMessage = "No Cards Found for Virtual Tapcash ID: " + virtualTapCashId;
+            return new ApiResponseDto("error", null, errorMessage);
         }
 
     }
 
-    public ResponseEntity<?> getOneCard(String cardId) {
+    public ApiResponseDto getOneCard(String cardId) {
         Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
         if (card.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(card);
+            String message = "card data retrieved successfully";
+            return new ApiResponseDto("success", card, message);
         } else {
-            String stringMessage = "No Cards Found for  Tapcash ID: " + cardId;
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(stringMessage);
+            String errorMessage = "No Cards Found for  Tapcash ID: " + cardId;
+            return new ApiResponseDto("success", null, errorMessage);
         }
     }
 
 
-    public ResponseEntity<?> updateCard(String cardId) {
+    public ApiResponseDto updateCard(String cardId) {
         Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
         TapcashCard updatedCard = card.get();
 
@@ -205,10 +218,13 @@ public class TapcashCardService {
             }
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("Card Successfully Removed!");
+        String message = "Card Removed Successfully!";
+
+        return new ApiResponseDto("success", null, message);
+
     }
 
-    public ResponseEntity<?> changeCard(String cardId) {
+    public ApiResponseDto changeCard(String cardId) {
         Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
         TapcashCard changedCard = card.get();
 
@@ -221,8 +237,9 @@ public class TapcashCardService {
 
         changedCard.setIsDefault(true);
         tapcashCardJpaRepository.save(changedCard);
+        String message = "Card Default Successfully Changed!";
 
-        return ResponseEntity.status(HttpStatus.OK).body("Card Default Successfully Changed!");
+        return new ApiResponseDto("success", null, message);
     }
 
     private String generateVirtualTapcashName(String virtualTapcashId) {
