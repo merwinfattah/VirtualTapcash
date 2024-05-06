@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChangeCardDto {
     private String cardId;
-    private String pin;
 }
