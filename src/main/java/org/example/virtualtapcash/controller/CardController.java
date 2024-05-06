@@ -63,7 +63,7 @@ public class CardController {
     @PatchMapping("/remove-card")
     public ResponseEntity<ApiResponseDto> removeCard(@RequestBody RemoveCardDto request) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.updateCard(request.getCardId()));
+            return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.updateCard(request.getUserId(), request.getCardId(), request.getPin()));
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));

@@ -51,13 +51,13 @@ public interface TapcashCardJpaRepository extends JpaRepository<TapcashCard, Str
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE tb_tapcash_card SET status = ?1, card_name = ?2, is_default = ?4 WHERE card_id = ?3",nativeQuery = true)
-    void updateTapcashCardStatusAndName(String newStatus, String newCardName, String cardId, Boolean isDefault);
+    @Query(value = "UPDATE tb_tapcash_card SET status = ?1, card_name = ?2, is_default = ?4, virtual_tapcash_id = ?5 WHERE card_id = ?3",nativeQuery = true)
+    void updateTapcashCardStatusAndName(String newStatus, String newCardName, String cardId, Boolean isDefault, String virtualTapcashId);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE tb_tapcash_card SET status = ?1, card_name = ?2, is_default = ?4 WHERE rfid = ?3",nativeQuery = true)
-    void updateTapcashCardStatusAndNameByRfid(String newStatus, String newCardName, String rfid, Boolean is_default);
+    @Query(value = "UPDATE tb_tapcash_card SET status = ?1, card_name = ?2, is_default = ?4, virtual_tapcash_id = ?5 WHERE rfid = ?3",nativeQuery = true)
+    void updateTapcashCardStatusAndNameByRfid(String newStatus, String newCardName, String rfid, Boolean is_default, String virtualTapcashId);
 
     @Modifying
     @Transactional

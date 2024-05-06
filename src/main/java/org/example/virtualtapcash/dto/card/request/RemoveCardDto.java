@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RemoveCardDto {
+    private Long userId;
     private String cardId;
     private String pin;
 }

@@ -9,6 +9,7 @@ import org.example.virtualtapcash.repository.AccountJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,19 +28,16 @@ public class TapcashCardService {
     @Autowired
     AccountJpaRepository accountJpaRepository;
 
+    @Autowired
+    private PasswordEncoder encoder;
+
     public ApiResponseDto registerCard(String cardId, String virtualTapcashId) {
 
         if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && tapcashCardJpaRepository.isCardActive(cardId)) {
 
-            String cardName = generateVirtualTapcashName(virtualTapcashId);
+            String errorMessage = "Card Already Registered!";
 
-            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
-
-            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, true);
-
-            String message = "Card Successfully Registered Again";
-
-            return new ApiResponseDto("success", null, message);
+            return new ApiResponseDto("error", null, errorMessage);
         }
 
         if (tapcashCardJpaRepository.isCardAlreadyRegistered(cardId) && !tapcashCardJpaRepository.isCardActive(cardId)) {
@@ -48,7 +46,7 @@ public class TapcashCardService {
 
             tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
 
-            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, true);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, true, virtualTapcashId);
 
             String message = "Card Successfully Registered";
 
@@ -110,18 +108,16 @@ public class TapcashCardService {
 
     public ApiResponseDto registerCardV2(String rfid, String virtualTapcashId) {
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
-            String cardName = generateVirtualTapcashName(virtualTapcashId);
-            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
-            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true);
-            String message = "Card Successfully Registered Again";
 
-            return new ApiResponseDto("success", null, message);
+            String errorMessage = "Card Already Registered";
+
+            return new ApiResponseDto("error", null, errorMessage);
         }
 
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && !tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
             String cardName = generateVirtualTapcashName(virtualTapcashId);
             tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
-            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true, virtualTapcashId);
             String message = "Card Successfully Registered Again";
 
             return new ApiResponseDto("success", null, message);
@@ -190,38 +186,39 @@ public class TapcashCardService {
     }
 
 
-    public ApiResponseDto updateCard(String cardId) {
-        Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
-        TapcashCard updatedCard = card.get();
+    public ApiResponseDto updateCard(Long userId, String cardId, String pin) {
+        Optional<MBankingAccount> account = accountJpaRepository.findById(userId);
 
-        updatedCard.setStatus("Inactive");
-        updatedCard.setCardName("");
-        updatedCard.setIsDefault(false);
+        if (account.isPresent()) {
+            String hashedPin = encoder.encode(pin);
 
-        tapcashCardJpaRepository.save(updatedCard);
+            if (account.get().getPin().equals(hashedPin)) {
+                Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
+                TapcashCard updatedCard = card.get();
 
-        List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(updatedCard.getUser().getVirtualTapCashId());
-        if (!changeDefault.isEmpty()) {
-            TapcashCard firstCard = changeDefault.get(0);
-            firstCard.setIsDefault(true);
-            tapcashCardJpaRepository.save(firstCard);
-        }
+                updatedCard.setStatus("Inactive");
+                updatedCard.setCardName("");
+                updatedCard.setIsDefault(false);
+                updatedCard.setUser(null);
 
-        List<TapcashCard> cardList = tapcashCardJpaRepository.findAllByOrderByCardNameAsc();
-        if (!cardList.isEmpty()) {
-            for (TapcashCard tempCard : cardList) {
-                if (tempCard.getStatus().equals("Active")) {
-                    tempCard.setIsDefault(true);
-                    tapcashCardJpaRepository.save(tempCard);
-                    break;
+                tapcashCardJpaRepository.save(updatedCard);
+
+                List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(account.get().getVirtualTapCashId());
+                if (!changeDefault.isEmpty()) {
+                    TapcashCard firstCard = changeDefault.get(0);
+                    firstCard.setIsDefault(true);
+                    tapcashCardJpaRepository.save(firstCard);
                 }
+
+                String message = "Card Removed Successfully!";
+
+                return new ApiResponseDto("success", null, message);
+            } else {
+                return new ApiResponseDto("error", null, "Wrong pin number");
             }
+        } else {
+            return new ApiResponseDto("error", null, "Account not found");
         }
-
-        String message = "Card Removed Successfully!";
-
-        return new ApiResponseDto("success", null, message);
-
     }
 
     public ApiResponseDto changeCard(String cardId) {
