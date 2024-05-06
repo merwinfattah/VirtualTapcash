@@ -18,7 +18,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'adopt'
-          jvm-options: '-XX:+EnableDynamicAgentLoading'
       - name: Build with Maven
         run: mvn clean install
       - name: Run Unit Tests
