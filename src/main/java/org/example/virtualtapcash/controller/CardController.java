@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 @Controller
-@CrossOrigin
 @RequestMapping("/api/v1/card")
 public class CardController {
 
@@ -29,7 +28,7 @@ public class CardController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.getAllCard(virtualTapCashId));
         } catch(CardNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto("error", null, e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
@@ -40,7 +39,7 @@ public class CardController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.getOneCard(cardId));
         } catch (CardNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto("error", null, e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, e.getMessage()));
         }
