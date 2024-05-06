@@ -2,6 +2,7 @@ package org.example.virtualtapcash.controller;
 
 import org.example.virtualtapcash.dto.card.request.AddCardDto;
 import org.example.virtualtapcash.dto.card.request.AddCardV2Dto;
+import org.example.virtualtapcash.dto.card.request.ChangeCardDto;
 import org.example.virtualtapcash.dto.card.request.RemoveCardDto;
 import org.example.virtualtapcash.service.TapcashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,15 @@ public class CardController {
         }
     }
 
+    @PatchMapping("/change-card")
+    public ResponseEntity<?> changeCard(@RequestBody ChangeCardDto request) {
+        try {
+            return tapcashCardService.changeCard(request.getCardId());
+        } catch (Exception e) {
+            String errorMessage = "An error occurred while processing the request.";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
+    }
 
 
 
