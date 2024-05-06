@@ -56,7 +56,7 @@ public class AuthController {
         } catch (AuthenticationException e) {
             // Log the authentication exception for debugging
             String errorMessage = e.getMessage();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 
