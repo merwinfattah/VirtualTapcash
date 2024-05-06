@@ -4,8 +4,10 @@ import org.example.virtualtapcash.dto.card.request.AddCardDto;
 import org.example.virtualtapcash.dto.card.request.AddCardV2Dto;
 import org.example.virtualtapcash.dto.card.request.ChangeCardDto;
 import org.example.virtualtapcash.dto.card.request.RemoveCardDto;
+import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
 import org.example.virtualtapcash.service.TapcashCardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,62 +21,62 @@ public class CardController {
     TapcashCardService tapcashCardService;
 
     @GetMapping ("/get-cards-data/{virtualTapCashId}")
-    public ResponseEntity<?> getCardsData(@PathVariable String virtualTapCashId) {
+    public ResponseEntity<ApiResponseDto> getCardsData(@PathVariable String virtualTapCashId) {
         try {
-            return tapcashCardService.getAllCard(virtualTapCashId);
+            return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.getAllCard(virtualTapCashId));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while retrieving card data.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 
     @GetMapping("/get-card/{cardId}")
-    public ResponseEntity<?> getOneCard(@PathVariable String cardId) {
+    public ResponseEntity<ApiResponseDto> getOneCard(@PathVariable String cardId) {
         try {
-            return tapcashCardService.getOneCard(cardId);
+            return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.getOneCard(cardId));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while retrieving card data.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 
     @PostMapping ("/add-card")
-    public ResponseEntity<?> addCard(@RequestBody AddCardDto request) {
+    public ResponseEntity<ApiResponseDto> addCard(@RequestBody AddCardDto request) {
         try {
-            return tapcashCardService.registerCard(request.getCardId(), request.getVirtualTapcashId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(tapcashCardService.registerCard(request.getCardId(), request.getVirtualTapcashId()));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while processing the request.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 
     @PostMapping("/add-card2")
-    public ResponseEntity<?> addCardV2(@RequestBody AddCardV2Dto addCardV2Dto) {
+    public ResponseEntity<ApiResponseDto> addCardV2(@RequestBody AddCardV2Dto addCardV2Dto) {
         try {
-            return tapcashCardService.registerCardV2(addCardV2Dto.getRfid(), addCardV2Dto.getVirtualTapcashId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(tapcashCardService.registerCardV2(addCardV2Dto.getRfid(), addCardV2Dto.getVirtualTapcashId()));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while processing the request.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 
     @PatchMapping("/remove-card")
-    public ResponseEntity<?> removeCard(@RequestBody RemoveCardDto request) {
+    public ResponseEntity<ApiResponseDto> removeCard(@RequestBody RemoveCardDto request) {
         try {
-            return tapcashCardService.updateCard(request.getCardId());
+            return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.updateCard(request.getCardId()));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while processing the request.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 
     @PatchMapping("/change-card")
-    public ResponseEntity<?> changeCard(@RequestBody ChangeCardDto request) {
+    public ResponseEntity<ApiResponseDto> changeCard(@RequestBody ChangeCardDto request) {
         try {
-            return tapcashCardService.changeCard(request.getCardId());
+            return ResponseEntity.status(HttpStatus.OK).body(tapcashCardService.changeCard(request.getCardId()));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while processing the request.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 

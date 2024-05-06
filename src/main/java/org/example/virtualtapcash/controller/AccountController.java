@@ -1,6 +1,7 @@
 package org.example.virtualtapcash.controller;
 
 import org.example.virtualtapcash.dto.account.request.AuthorizeQrDto;
+import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
 import org.example.virtualtapcash.service.JwtService;
 import org.example.virtualtapcash.service.AccountMBankingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,26 +20,24 @@ public class    AccountController {
     private JwtService jwtService;
 
     @GetMapping("/get-user-data")
-    public ResponseEntity<?> getUserData(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponseDto> getUserData(@RequestHeader("Authorization") String token) {
         try {
             String jwtToken = token.substring(7);
             String username = jwtService.extractUsername(jwtToken);
-            return accountMBankingService.getUserByUsername(username);
+            return ResponseEntity.ok(accountMBankingService.getUserByUsername(username));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while retrieving card data.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
-
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
-
     }
 
     @PostMapping("/authorize-qr")
-    public ResponseEntity<?> authorizeQr(@RequestBody AuthorizeQrDto request) {
+    public ResponseEntity<ApiResponseDto> authorizeQr(@RequestBody AuthorizeQrDto request) {
         try {
-            return accountMBankingService.verifyQr(request.getUserId(), request.getPin());
+            return ResponseEntity.ok(accountMBankingService.verifyQr(request.getUserId(), request.getPin()));
         } catch (Exception e) {
-            String errorMessage = "An error occurred while retrieving card data.";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto("error", null, errorMessage));
         }
     }
 
