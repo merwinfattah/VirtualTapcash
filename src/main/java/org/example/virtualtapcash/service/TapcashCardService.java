@@ -57,18 +57,6 @@ public class TapcashCardService {
 
         }
 
-        Optional<TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
-        TapcashCard updatedCard = card.get();
-
-        List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(updatedCard.getUser().getVirtualTapCashId());
-        if (!changeDefault.isEmpty()) {
-            for (TapcashCard tapcashCard : changeDefault) {
-                tapcashCard.setIsDefault(false);
-            }
-            TapcashCard firstCard = changeDefault.get(1);
-            firstCard.setIsDefault(true);
-            tapcashCardJpaRepository.saveAll(changeDefault);
-        }
 
         Optional<ExternalSystemCard> relatedCard = externalSystemCardService.getCardById(cardId);
 
