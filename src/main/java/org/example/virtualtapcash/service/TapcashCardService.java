@@ -208,6 +208,23 @@ public class TapcashCardService {
         return ResponseEntity.status(HttpStatus.OK).body("Card Successfully Removed!");
     }
 
+    public ResponseEntity<?> changeCard(String cardId) {
+        Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
+        TapcashCard changedCard = card.get();
+
+        List<TapcashCard> removeDefault = tapcashCardJpaRepository.changeDefaultCard(changedCard.getUser().getVirtualTapCashId(), cardId);
+        if (!removeDefault.isEmpty()) {
+            TapcashCard firstCard = removeDefault.get(0);
+            firstCard.setIsDefault(false);
+            tapcashCardJpaRepository.save(firstCard);
+        }
+
+        changedCard.setIsDefault(true);
+        tapcashCardJpaRepository.save(changedCard);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Card Default Successfully Changed!");
+    }
+
     private String generateVirtualTapcashName(String virtualTapcashId) {
         List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(virtualTapcashId);
 

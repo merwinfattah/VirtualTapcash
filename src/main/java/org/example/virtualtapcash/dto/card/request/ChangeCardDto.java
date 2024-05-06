@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChangeCardDto {
     private String cardId;
-    private Boolean is_default;
+    private String pin;
 }
