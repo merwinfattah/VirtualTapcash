@@ -201,11 +201,11 @@ public class TapcashCardService {
 
                 tapcashCardJpaRepository.save(updatedCard);
 
-                if (card.get().getIsDefault().equals(true)) {
+                if (!tapcashCardJpaRepository.isThereCardSetToDefaultByVirtualTapcashId(account.get().getVirtualTapCashId())) {
                     List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(account.get().getVirtualTapCashId());
 
                     for (TapcashCard tempCard : cardList) {
-                        if (!tempCard.getIsDefault() && !tempCard.getCardName().equals(card.get().getCardName())) {
+                        if (!tempCard.getIsDefault()) {
                             tempCard.setIsDefault(true);
                             tapcashCardJpaRepository.save(tempCard);
                             break;
