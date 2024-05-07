@@ -187,11 +187,13 @@ public class TapcashCardService {
 
                 tapcashCardJpaRepository.save(updatedCard);
 
-                List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(account.get().getVirtualTapCashId());
-                if (!changeDefault.isEmpty()) {
-                    TapcashCard firstCard = changeDefault.get(0);
-                    firstCard.setIsDefault(true);
-                    tapcashCardJpaRepository.save(firstCard);
+                if (card.get().getIsDefault().equals(true)) {
+                    List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(account.get().getVirtualTapCashId());
+                    if (!changeDefault.isEmpty()) {
+                        TapcashCard firstCard = changeDefault.get(0);
+                        firstCard.setIsDefault(true);
+                        tapcashCardJpaRepository.save(firstCard);
+                    }
                 }
 
                 String message = "Card Removed Successfully!";
