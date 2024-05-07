@@ -1,9 +1,6 @@
 package org.example.virtualtapcash.service;
 
 import jakarta.transaction.Transactional;
-import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
-import org.example.virtualtapcash.exception.card.CardNotFoundException;
-import org.example.virtualtapcash.exception.qr.QrAlreadyActivatedException;
 import org.example.virtualtapcash.model.QR;
 import org.example.virtualtapcash.model.TapcashCard;
 import org.example.virtualtapcash.repository.QrJpaRepository;
@@ -29,12 +26,12 @@ public class QrService {
     }
 
     @Transactional
-    public ApiResponseDto createIsActiveByCardId(String cardId) throws CardNotFoundException, QrAlreadyActivatedException {
+    public Boolean createIsActiveByCardId(String cardId) {
         Optional<TapcashCard> cardOptional = tapcashCardRepository.findTapcashCardsByCardId(cardId);
 
         if (!cardOptional.isPresent()) {
             // Card not found, return false or handle the error appropriately
-            throw new CardNotFoundException("Card not Found");
+            return false;
         }
 
         TapcashCard card = cardOptional.get();
@@ -43,13 +40,13 @@ public class QrService {
         if (existingQr != null) {
             if (existingQr.getIsActive() && existingQr.getActivationTime().plusMinutes(1).isAfter(LocalDateTime.now())) {
                 // QR code is already active within 1 minute, don't create a new one
-                throw new QrAlreadyActivatedException("QR code is already active within 1 minute, don't create a new one");
+                return false;
             } else {
                 // QR code is inactive, update the existing record
                 existingQr.setIsActive(true);
                 existingQr.setActivationTime(LocalDateTime.now());
                 qrJpaRepository.save(existingQr);
-                return new ApiResponseDto("success", true, "Qr code activated");
+                return true;
             }
         }
 
@@ -61,19 +58,12 @@ public class QrService {
 
         // Save the new QR code to the repository
         qrJpaRepository.save(newQr);
-        return new ApiResponseDto("success", true, "Qr code is created and activated");
+        return true;
     }
 
-    public ApiResponseDto checkIsActiveByCardId(String cardId) {
+    public boolean checkIsActiveByCardId(String cardId) {
         QR qr = qrJpaRepository.findActiveQRCodeByCardId(cardId);
-        String message;
-        Boolean isActive = qr != null && qr.getIsActive() && qr.getActivationTime().plusMinutes(1).isAfter(LocalDateTime.now());
-        if (isActive) {
-            message = "Qr is active";
-        } else {
-            message = "Qr is inactive";
-        }
-        return new ApiResponseDto("success", isActive, message);
+        return qr != null && qr.getIsActive() && qr.getActivationTime().plusMinutes(1).isAfter(LocalDateTime.now());
     }
 
     @Transactional
