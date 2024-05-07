@@ -11,7 +11,7 @@ import java.util.Optional;
 
 
 public interface AccountJpaRepository extends JpaRepository<MBankingAccount, Long> {
-    @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id =?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM tb_mbanking_acount WHERE virtual_tapcash_id =?1", nativeQuery = true)
     Optional<MBankingAccount> getUserByVirtualTapcashId(String virtualTapcashId);
 
     Optional<MBankingAccount> findByUsername(String name);
