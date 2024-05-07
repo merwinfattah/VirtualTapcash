@@ -47,7 +47,15 @@ public class TapcashCardService {
 
             String cardName = generateVirtualTapcashName(virtualTapcashId);
 
-            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, false, virtualTapcashId);
+            Boolean isDefault;
+
+            if (tapcashCardJpaRepository.isThereCardSetToDefaultByVirtualTapcashId(virtualTapcashId)) {
+                isDefault = false;
+            } else {
+                isDefault = true;
+            }
+
+            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, isDefault, virtualTapcashId);
 
             String message = "Card Successfully Registered";
 
@@ -102,7 +110,16 @@ public class TapcashCardService {
 
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && !tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
             String cardName = generateVirtualTapcashName(virtualTapcashId);
-            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, false, virtualTapcashId);
+
+            Boolean isDefault;
+
+            if (tapcashCardJpaRepository.isThereCardSetToDefaultByVirtualTapcashId(virtualTapcashId)) {
+                isDefault = false;
+            } else {
+                isDefault = true;
+            }
+
+            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, isDefault, virtualTapcashId);
             String message = "Card Successfully Registered Again";
 
             return new ApiResponseDto("success", null, message);
