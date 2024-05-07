@@ -47,9 +47,7 @@ public class TapcashCardService {
 
             String cardName = generateVirtualTapcashName(virtualTapcashId);
 
-            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
-
-            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, true, virtualTapcashId);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndName("Active", cardName, cardId, false, virtualTapcashId);
 
             String message = "Card Successfully Registered";
 
@@ -104,8 +102,7 @@ public class TapcashCardService {
 
         if (tapcashCardJpaRepository.isCardAlreadyRegisteredByRfid(rfid) && !tapcashCardJpaRepository.isCardActiveByRfid(rfid)) {
             String cardName = generateVirtualTapcashName(virtualTapcashId);
-            tapcashCardJpaRepository.updateIsDefaultToFalse(virtualTapcashId);
-            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, true, virtualTapcashId);
+            tapcashCardJpaRepository.updateTapcashCardStatusAndNameByRfid("Active", cardName, rfid, false, virtualTapcashId);
             String message = "Card Successfully Registered Again";
 
             return new ApiResponseDto("success", null, message);
@@ -188,11 +185,15 @@ public class TapcashCardService {
                 tapcashCardJpaRepository.save(updatedCard);
 
                 if (card.get().getIsDefault().equals(true)) {
-                    List<TapcashCard> changeDefault = tapcashCardJpaRepository.changeIsDefault(account.get().getVirtualTapCashId());
-                    if (!changeDefault.isEmpty()) {
-                        TapcashCard firstCard = changeDefault.get(0);
-                        firstCard.setIsDefault(true);
-                        tapcashCardJpaRepository.save(firstCard);
+                    List<TapcashCard> cardList = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashIdOrderByCardNameAsc(account.get().getVirtualTapCashId());
+
+                    for (TapcashCard tempCard : cardList) {
+                        if (tempCard.getIsDefault().equals(false) && !tempCard.getCardName().equals(card.get().getCardName())) {
+                            tempCard.setIsDefault(true);
+                            tapcashCardJpaRepository.save(tempCard);
+                            break;
+                        }
+
                     }
                 }
 
