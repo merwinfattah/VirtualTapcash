@@ -1,6 +1,7 @@
 package org.example.virtualtapcash.repository;
 
 import org.example.virtualtapcash.model.QR;
+import org.example.virtualtapcash.model.TapcashCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,9 @@ public interface QrJpaRepository extends JpaRepository<QR, Long> {
 
     @Query("SELECT q FROM QR q WHERE q.card.user.username = :username")
     List<QR> findByUser(@Param("username") String username);
+
+    @Query("SELECT q FROM QR q WHERE q.card = :card")
+    QR findByCard(@Param("card") TapcashCard card);
+
+
 }

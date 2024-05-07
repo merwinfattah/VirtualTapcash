@@ -2,12 +2,15 @@ package org.example.virtualtapcash.service;
 
 import jakarta.transaction.Transactional;
 import org.example.virtualtapcash.model.QR;
+import org.example.virtualtapcash.model.TapcashCard;
 import org.example.virtualtapcash.repository.QrJpaRepository;
+import org.example.virtualtapcash.repository.TapcashCardJpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,8 +18,47 @@ import java.util.TimerTask;
 public class QrService {
     private final QrJpaRepository qrJpaRepository;
 
-    public QrService(QrJpaRepository qrGeneratedRepository) {
+    private final TapcashCardJpaRepository tapcashCardRepository;
+
+    public QrService(QrJpaRepository qrGeneratedRepository, TapcashCardJpaRepository tapcashCardRepository) {
         this.qrJpaRepository = qrGeneratedRepository;
+        this.tapcashCardRepository = tapcashCardRepository;
+    }
+
+    @Transactional
+    public boolean createIsActiveByCardId(String cardId) {
+        Optional<TapcashCard> cardOptional = tapcashCardRepository.findTapcashCardsByCardId(cardId);
+
+        if (!cardOptional.isPresent()) {
+            // Card not found, return false or handle the error appropriately
+            return false;
+        }
+
+        TapcashCard card = cardOptional.get();
+
+        QR existingQr = qrJpaRepository.findByCard(card);
+        if (existingQr != null) {
+            if (existingQr.getIsActive() && existingQr.getActivationTime().plusMinutes(1).isAfter(LocalDateTime.now())) {
+                // QR code is already active within 1 minute, don't create a new one
+                return false;
+            } else {
+                // QR code is inactive, update the existing record
+                existingQr.setIsActive(true);
+                existingQr.setActivationTime(LocalDateTime.now());
+                qrJpaRepository.save(existingQr);
+                return true;
+            }
+        }
+
+        // Create a new QR code entry if none exists
+        QR newQr = new QR();
+        newQr.setCard(card); // Set the TapcashCard object
+        newQr.setIsActive(true);
+        newQr.setActivationTime(LocalDateTime.now());
+
+        // Save the new QR code to the repository
+        qrJpaRepository.save(newQr);
+        return true;
     }
 
     public boolean checkIsActiveByCardId(String cardId) {

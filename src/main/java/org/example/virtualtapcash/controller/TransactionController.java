@@ -52,27 +52,6 @@ public class TransactionController {
         }
     }
 
-    @PostMapping("/activate/{cardId}")
-    public ResponseEntity<?> activateQrCode(@PathVariable String cardId) {
-        boolean isActivated = qrService.activateQrCodeByCardId(cardId);
-        if (isActivated) {
-            return ResponseEntity.ok("QR Code activated successfully.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to activate QR Code or no inactive QR Code found.");
-        }
-    }
-
-    @PostMapping("/deactivate/{cardId}")
-    public ResponseEntity<String> deactivateQrCodeImmediately(@PathVariable String cardId) {
-        boolean isDeactivated = qrService.deactivateQrCodeByCardIdImmediately(cardId);
-        if (isDeactivated) {
-            return ResponseEntity.ok("QR Code deactivated successfully.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("QR Code not found or already inactive.");
-        }
-    }
-
-
     @PostMapping("/qrpayment")
     public ResponseEntity<ApiResponseDto> qrPayment(@RequestBody PaymentDto paymentDto) {
         try {
