@@ -82,7 +82,6 @@ public class TapcashCardService {
             newCard.setStatus("Active");
             newCard.setUser(user.get());
             newCard.setCardName(cardName);
-            newCard.setIsDefault(true);
 
             tapcashCardJpaRepository.save(newCard);
 
@@ -136,7 +135,7 @@ public class TapcashCardService {
             newCard.setStatus("Active");
             newCard.setUser(user.get());
             newCard.setCardName(cardName);
-            newCard.setIsDefault(true);
+
             tapcashCardJpaRepository.save(newCard);
 
             String message = "Card Successfully Registered";
@@ -176,9 +175,8 @@ public class TapcashCardService {
         Optional<MBankingAccount> account = accountJpaRepository.findById(userId);
 
         if (account.isPresent()) {
-            String hashedPin = encoder.encode(pin);
 
-            if (account.get().getPin().equals(hashedPin)) {
+            if (encoder.matches(pin, account.get().getPin())) {
                 Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
                 TapcashCard updatedCard = card.get();
 
