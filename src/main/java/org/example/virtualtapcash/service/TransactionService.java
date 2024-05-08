@@ -101,14 +101,14 @@ public class TransactionService {
         }
 
         if ("TOPUP".equals(type)) {
-            BigDecimal totalBalanceAfterTopUp = card.getTapCashBalance().add(nominal);
-            if (totalBalanceAfterTopUp.compareTo(BigDecimal.valueOf(2000000)) > 0) {
-                throw new ErrorTransaction("Top-up amount exceeds maximum limit.");
-            }
-
             BigDecimal bankAccountBalanceAfterTopUp = mBankingAccount.getBankAccountBalance().subtract(nominal);
             if (bankAccountBalanceAfterTopUp.compareTo(BigDecimal.ZERO) < 0) {
                 throw new ErrorTransaction("Bank account balance is insufficient.");
+            }
+
+            BigDecimal totalBalanceAfterTopUp = card.getTapCashBalance().add(nominal);
+            if (totalBalanceAfterTopUp.compareTo(BigDecimal.valueOf(2000000)) > 0) {
+                throw new ErrorTransaction("Top-up amount exceeds maximum limit.");
             }
 
             mBankingAccount.setBankAccountBalance(mBankingAccount.getBankAccountBalance().subtract(nominal));
