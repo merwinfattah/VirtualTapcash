@@ -86,7 +86,7 @@ public class TransactionService {
     @Transactional
     public ApiResponseDto handleTopUpWithdrawal(String cardId, BigDecimal nominal, String type, String virtualTapcashId, String pin) throws CardNotFoundException, ErrorTransaction {
         if (nominal.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ErrorTransaction("Nominal must be a positive value.");
+            throw new ErrorTransaction("Nominal Transaksi Tidak Boleh Negatif (-).");
         }
 
         TapcashCard card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId)
