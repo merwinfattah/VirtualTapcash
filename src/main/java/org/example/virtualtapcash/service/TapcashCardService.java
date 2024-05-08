@@ -184,6 +184,16 @@ public class TapcashCardService {
         }
     }
 
+    public ApiResponseDto getOneCardExternal(String cardId) throws CardNotFoundException {
+        Optional <ExternalSystemCard> card = externalSystemCardService.getCardById(cardId);
+        if (card.isPresent()) {
+            String message = "card data retrieved successfully";
+            return new ApiResponseDto("success", card, message);
+        } else {
+            throw new CardNotFoundException("No Cards Found for  Tapcash ID: " + cardId);
+        }
+    }
+
 
     public ApiResponseDto updateCard(Long userId, String cardId, String pin) throws BadCredentialException, AccountNotFoundException {
         Optional<MBankingAccount> account = accountJpaRepository.findById(userId);
