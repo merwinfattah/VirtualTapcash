@@ -15,8 +15,7 @@ public class VirtualTapcashApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/v1/**").allowedOrigins("https://virtual-tapcash.netlify.app");
-//                "http://localhost:4200",
+                registry.addMapping("/api/v1/**").allowedOrigins("http://localhost:4200", "https://virtual-tapcash.netlify.app");
             }
         };
     }
