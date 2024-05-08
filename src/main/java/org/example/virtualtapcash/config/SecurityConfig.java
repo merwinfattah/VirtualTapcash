@@ -44,6 +44,7 @@ public class SecurityConfig {
 
         return http
                 .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/card/get-card/**", "api/v1/transaction/payment", "api/v1/qr/deactivate/**", "api/v1/transaction/qrpayment/**").permitAll()
                         .requestMatchers("/api/v1/auth/hello", "/api/v1/account/get-user-data/**", "/api/v1/account/authorize-qr", "/api/v1/card/get-cards-data/**", "/api/v1/card/add-card", "/api/v1/card/add-card2", "/api/v1/card/remove-card", "/api/v1/card/change-card", "/api/v1/transaction/get-transaction-data/**", "api/v1/transaction/top-up-n-withdraw", "api/v1/transaction/activate-and-pay/**", "api/v1/qr/activate/**").authenticated()
 
