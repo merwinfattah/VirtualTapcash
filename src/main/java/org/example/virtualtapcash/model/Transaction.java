@@ -16,7 +16,6 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonFilter("transactionFilter")
 public class Transaction {
 
     @Id
@@ -35,6 +34,7 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "virtual_tapcash_id", referencedColumnName = "virtual_tapcash_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonFilter("userFilter")
     private MBankingAccount user;
 
     @ManyToOne

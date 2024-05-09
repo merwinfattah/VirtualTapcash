@@ -58,7 +58,7 @@ public class TransactionService {
 
         // Create and configure SimpleFilterProvider
         SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-        filterProvider.addFilter("transactionFilter", SimpleBeanPropertyFilter.serializeAllExcept("user.pin", "user.bankAccountBalance", "user.accountNumber"));
+        filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
 
         // Set the filter provider to the ObjectMapper
         objectMapper.setFilterProvider(filterProvider);
