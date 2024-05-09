@@ -11,7 +11,5 @@ import java.util.Optional;
 public interface ExternalSystemCardJpaRepository extends JpaRepository<ExternalSystemCard, String> {
     Optional<ExternalSystemCard> findTapcashCardsByCardId(String cardId);
 
-    Optional<ExternalSystemCard> findTapcashCardsByRfid(String rfid);
-
     Optional<ExternalSystemCard> findCardIdByRfid(String rfid);
 }

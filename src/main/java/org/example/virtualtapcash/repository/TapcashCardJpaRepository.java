@@ -13,20 +13,11 @@ import java.util.Optional;
 
 public interface TapcashCardJpaRepository extends JpaRepository<TapcashCard, String> {
 
-    Optional <TapcashCard> findTapcashCardsByRfid(String rfid);
-
-    List <TapcashCard> findAllByOrderByCardNameAsc();
 
     Optional<TapcashCard> findTapcashCardsByCardId(String cardId);
 
-    @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND is_default = false AND status = 'Active' ORDER BY updated_at DESC", nativeQuery = true)
-    List<TapcashCard> changeIsDefault(String virtualTapcashId);
-
     @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND is_default = true AND card_id != ?2", nativeQuery = true)
     List<TapcashCard> changeDefaultCard(String virtualTapcashId, String cardId);
-
-    @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND is_default = true AND status = 'Active' ORDER BY updated_at DESC", nativeQuery = true)
-    List<TapcashCard> removeIsDefault(String virtualTapcashId);
 
     @Query(value = "SELECT * FROM tb_tapcash_card WHERE virtual_tapcash_id = ?1 AND status = ?2 ORDER BY (CASE WHEN is_default = true THEN 0 ELSE 1 END)", nativeQuery = true)
     List<TapcashCard> findTapcashCardsByVirtualTapcashId(String virtualTapcashId, String status);
@@ -59,9 +50,6 @@ public interface TapcashCardJpaRepository extends JpaRepository<TapcashCard, Str
     @Query(value = "UPDATE tb_tapcash_card SET status = ?1, card_name = ?2, is_default = ?4, virtual_tapcash_id = ?5 WHERE rfid = ?3",nativeQuery = true)
     void updateTapcashCardStatusAndNameByRfid(String newStatus, String newCardName, String rfid, Boolean is_default, String virtualTapcashId);
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE tb_tapcash_card SET is_default = false WHERE virtual_tapcash_id = ?1 AND is_default = true AND status = 'Active'", nativeQuery = true)
-    void updateIsDefaultToFalse(String virtualTapcashId);
+
 }
 

@@ -3,11 +3,7 @@ package org.example.virtualtapcash.controller;
 import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
 import org.example.virtualtapcash.dto.transaction.request.PaymentDto;
 import org.example.virtualtapcash.dto.transaction.request.TransactionDto;
-import org.example.virtualtapcash.dto.transaction.response.TransactionResultDto;
 import org.example.virtualtapcash.exception.transaction.ErrorTransaction;
-import org.example.virtualtapcash.model.QR;
-import org.example.virtualtapcash.model.Transaction;
-import org.example.virtualtapcash.repository.QrJpaRepository;
 import org.example.virtualtapcash.service.QrService;
 import org.example.virtualtapcash.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.example.virtualtapcash.exception.card.CardNotFoundException;
 import org.example.virtualtapcash.exception.transaction.InsufficientFundsException;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transaction")
@@ -30,10 +23,10 @@ public class TransactionController {
     @Autowired
     private QrService qrService;
 
-    @GetMapping("/get-transaction-data/{cardId}")
-    public ResponseEntity<ApiResponseDto> getTransactionData(@PathVariable String cardId) {
+    @GetMapping("/get-transaction-data")
+    public ResponseEntity<ApiResponseDto> getTransactionData(@PathVariable String virtualTapcashId) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransactionByCardId(cardId));
+            return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransactionByVirtualTapcashId(virtualTapcashId));
         } catch (CardNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {

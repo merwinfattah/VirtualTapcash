@@ -14,9 +14,6 @@ import java.util.List;
 public interface QrJpaRepository extends JpaRepository<QR, Long> {
 
     // Use a custom query to find inactive QR codes by card ID
-    @Query("SELECT q FROM QR q WHERE q.card.cardId = :cardId AND q.isActive = false")
-    List<QR> findInactiveQRCodesByCardId(@Param("cardId") String cardId);
-
     @Query("SELECT q FROM QR q WHERE q.card.cardId = :cardId AND q.isActive = true")
     QR findActiveQRCodeByCardId(@Param("cardId") String cardId);
 
