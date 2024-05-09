@@ -52,26 +52,25 @@ public class TransactionService {
             throw new CardNotFoundException("No Transactions Data Found for Card ID: " + cardId);
 
         }
-        // Create ObjectMapper instance
-        ObjectMapper objectMapper = new ObjectMapper();
 
-        // Create and configure SimpleFilterProvider
-        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-        filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
-
-        // Set the filter provider to the ObjectMapper
-        objectMapper.setFilterProvider(filterProvider);
-
-        // Convert transactions to JSON using the ObjectMapper
-        String transactionsJson;
         try {
-            transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transactions);
-            List<Object> list = objectMapper.readValue(transactionsJson, List.class);
-            transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list);
+            // Create ObjectMapper instance
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Create and configure SimpleFilterProvider
+            SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+            filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+
+            // Set the filter provider to the ObjectMapper
+            objectMapper.setFilterProvider(filterProvider);
+
+            // Convert transactions to JSON using the ObjectMapper
+            String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transactions);
+
+            return new ApiResponseDto("success", transactionsJson, "Transactions Retrieved Successfully");
         } catch (Exception e) {
             throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
         }
-        return new ApiResponseDto("success", transactionsJson, "Transactions Retrieved Successfully");
     }
 
     @Transactional
