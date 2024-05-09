@@ -3,6 +3,9 @@ package org.example.virtualtapcash.service;
 
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
 import org.example.virtualtapcash.dto.transaction.response.TransactionResultDto;
 import org.example.virtualtapcash.exception.transaction.ErrorTransaction;
@@ -50,7 +53,24 @@ public class TransactionService {
             throw new CardNotFoundException("No Transactions Data Found for Card ID: " + cardId);
 
         }
-        return new ApiResponseDto("success", transactions, "Transactions Retrieved Successfully");
+        // Create ObjectMapper instance
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Create and configure SimpleFilterProvider
+        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+        filterProvider.addFilter("transactionFilter", SimpleBeanPropertyFilter.serializeAllExcept("user.pin", "user.bankAccountBalance", "user.accountNumber"));
+
+        // Set the filter provider to the ObjectMapper
+        objectMapper.setFilterProvider(filterProvider);
+
+        // Convert transactions to JSON using the ObjectMapper
+        String transactionsJson;
+        try {
+            transactionsJson = objectMapper.writeValueAsString(transactions);
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+        }
+        return new ApiResponseDto("success", transactionsJson, "Transactions Retrieved Successfully");
     }
 
     @Transactional

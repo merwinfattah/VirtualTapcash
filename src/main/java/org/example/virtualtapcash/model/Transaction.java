@@ -1,5 +1,6 @@
 package org.example.virtualtapcash.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonFilter("transactionFilter")
 public class Transaction {
 
     @Id

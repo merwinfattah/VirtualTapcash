@@ -11,13 +11,11 @@ import java.util.Optional;
 
 
 public interface AccountJpaRepository extends JpaRepository<MBankingAccount, Long> {
-    @Query(value = "SELECT user_id, account_number, bank_account_balance, customer_name, pin, role, username, virtual_tapcash_id  FROM tb_mbanking_account WHERE virtual_tapcash_id =?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM tb_mbanking_account WHERE virtual_tapcash_id =?1", nativeQuery = true)
     Optional<MBankingAccount> getUserByVirtualTapcashId(String virtualTapcashId);
 
-    @Query(value = "SELECT user_id, account_number, bank_account_balance, customer_name, pin, role, username, virtual_tapcash_id  FROM tb_mbanking_account WHERE username =?1", nativeQuery = true)
     Optional<MBankingAccount> findByUsername(String name);
 
-    @Query(value = "SELECT user_id, account_number, bank_account_balance, customer_name, pin, role, username, virtual_tapcash_id  FROM tb_mbanking_account WHERE virtual_tapcash_id =?1", nativeQuery = true)
     Optional<MBankingAccount> findMBankingAccountByVirtualTapCashId(String virtualTapcashId);
 
     Boolean existsByUsername(String username);
