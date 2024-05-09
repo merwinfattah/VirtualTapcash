@@ -1,5 +1,6 @@
 package org.example.virtualtapcash.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,15 +27,18 @@ public class MBankingAccount {
     @Column(name = "virtual_tapcash_id")
     private String virtualTapCashId;
 
+    @JsonIgnore
     @Column(name = "pin")
     private String pin;
 
     @Column(name = "customer_name")
     private String customerName;
 
+    @JsonIgnore
     @Column(name = "account_number")
     private String accountNumber;
 
+    @JsonIgnore
     @Column(name = "bank_account_balance")
     private BigDecimal bankAccountBalance;
 
