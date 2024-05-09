@@ -17,7 +17,6 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonFilter("cardFilter")
 public class TapcashCard {
 
     @Id
