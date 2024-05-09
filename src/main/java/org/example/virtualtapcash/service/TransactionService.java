@@ -66,7 +66,7 @@ public class TransactionService {
         // Convert transactions to JSON using the ObjectMapper
         String transactionsJson;
         try {
-            transactionsJson = objectMapper.writeValueAsString(transactions);
+            transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transactions);
         } catch (Exception e) {
             throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
         }
