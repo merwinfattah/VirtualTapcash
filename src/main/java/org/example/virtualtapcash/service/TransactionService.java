@@ -70,7 +70,7 @@ public class TransactionService {
         } catch (Exception e) {
             throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
         }
-        return new ApiResponseDto("success", transactionsJson, "Transactions Retrieved Successfully");
+        return new ApiResponseDto("success", transactions, "Transactions Retrieved Successfully");
     }
 
     @Transactional
