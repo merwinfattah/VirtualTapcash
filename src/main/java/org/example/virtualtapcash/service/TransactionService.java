@@ -3,6 +3,7 @@ package org.example.virtualtapcash.service;
 
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -67,7 +68,9 @@ public class TransactionService {
             // Convert transactions to JSON using the ObjectMapper
             String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transactions);
 
-            return new ApiResponseDto("success", transactionsJson, "Transactions Retrieved Successfully");
+            JsonNode jsonObject = objectMapper.readTree(transactionsJson);
+
+            return new ApiResponseDto("success", jsonObject, "Transactions Retrieved Successfully");
         } catch (Exception e) {
             throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
         }
