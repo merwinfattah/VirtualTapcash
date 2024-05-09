@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
-import org.example.virtualtapcash.dto.transaction.response.TransactionResultDto;
 import org.example.virtualtapcash.exception.transaction.ErrorTransaction;
 import org.example.virtualtapcash.model.ExternalSystemCard;
 import org.example.virtualtapcash.model.TapcashCard;
@@ -67,6 +66,8 @@ public class TransactionService {
         String transactionsJson;
         try {
             transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transactions);
+            List<Object> list = objectMapper.readValue(transactionsJson, List.class);
+            transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list);
         } catch (Exception e) {
             throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
         }
