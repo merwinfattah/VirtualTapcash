@@ -1,6 +1,7 @@
 package org.example.virtualtapcash.controller;
 
 import org.example.virtualtapcash.dto.general.response.ApiResponseDto;
+import org.example.virtualtapcash.dto.transaction.request.GetTransactionDto;
 import org.example.virtualtapcash.dto.transaction.request.PaymentDto;
 import org.example.virtualtapcash.dto.transaction.request.TransactionDto;
 import org.example.virtualtapcash.exception.transaction.ErrorTransaction;
@@ -24,9 +25,9 @@ public class TransactionController {
     private QrService qrService;
 
     @GetMapping("/get-transaction-data")
-    public ResponseEntity<ApiResponseDto> getTransactionData(@PathVariable String virtualTapcashId) {
+    public ResponseEntity<ApiResponseDto> getTransactionData(@RequestBody GetTransactionDto request) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransactionByVirtualTapcashId(virtualTapcashId));
+            return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransaction(request.getCardId(), request.getVirtualTapcashId()));
         } catch (CardNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {

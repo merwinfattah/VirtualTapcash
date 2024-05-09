@@ -44,12 +44,10 @@ public class TransactionService {
     private PasswordEncoder passwordEncoder;
 
 
-    public ApiResponseDto getTransactionByVirtualTapcashId(String virtualTapcashId) throws CardNotFoundException {
-        List<TapcashCard> cards = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashId(virtualTapcashId, "Active");
-        TapcashCard card = cards.get(0);
-        List<Transaction> transactions = transactionJpaRepository.findTransactionsByCardIdFilteredByVirtualTapcashId(card.getUser().getVirtualTapCashId());
+    public ApiResponseDto getTransaction(String cardId, String virtualTapcashId) throws CardNotFoundException {
+        List<Transaction> transactions = transactionJpaRepository.findTransactionsByCardIdAndVirtualTapcashId(cardId, virtualTapcashId);
         if (transactions.isEmpty()) {
-            throw new CardNotFoundException("No Transactions Data Found for Card ID: " + card.getCardId());
+            throw new CardNotFoundException("No Transactions Data Found for Card ID: " + cardId);
 
         }
         return new ApiResponseDto("success", transactions, "Transactions Retrieved Successfully");
