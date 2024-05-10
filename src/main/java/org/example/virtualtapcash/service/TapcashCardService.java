@@ -1,5 +1,6 @@
 package org.example.virtualtapcash.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -169,8 +170,27 @@ public class TapcashCardService {
 
         List<TapcashCard> cardsData = tapcashCardJpaRepository.findTapcashCardsByVirtualTapcashId(virtualTapCashId, "Active");
         if (!cardsData.isEmpty()) {
-            String message = "cards data retrieved successfully";
-            return new ApiResponseDto("success", cardsData, message);
+            try {
+                // Create ObjectMapper instance
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                // Create and configure SimpleFilterProvider
+                SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+                filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+
+                // Set the filter provider to the ObjectMapper
+                objectMapper.setFilterProvider(filterProvider);
+
+                // Convert transactions to JSON using the ObjectMapper
+                String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(cardsData);
+
+                JsonNode jsonObject = objectMapper.readTree(transactionsJson);
+
+                return new ApiResponseDto("success", jsonObject, "cards data retrieved successfully");
+            } catch (Exception e) {
+                throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+            }
+
         } else {
             throw new CardNotFoundException("No Cards Found for Virtual Tapcash ID: " + virtualTapCashId);
         }
@@ -180,8 +200,26 @@ public class TapcashCardService {
     public ApiResponseDto getOneCard(String cardId) throws CardNotFoundException {
         Optional <TapcashCard> card = tapcashCardJpaRepository.findTapcashCardsByCardId(cardId);
         if (card.isPresent()) {
-            String message = "card data retrieved successfully";
-            return new ApiResponseDto("success", card, message);
+            try {
+                // Create ObjectMapper instance
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                // Create and configure SimpleFilterProvider
+                SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+                filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+
+                // Set the filter provider to the ObjectMapper
+                objectMapper.setFilterProvider(filterProvider);
+
+                // Convert transactions to JSON using the ObjectMapper
+                String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(card);
+
+                JsonNode jsonObject = objectMapper.readTree(transactionsJson);
+
+                return new ApiResponseDto("success", jsonObject, "card data retrieved successfully");
+            } catch (Exception e) {
+                throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+            }
         } else {
             throw new CardNotFoundException("No Cards Found for  Tapcash ID: " + cardId);
         }
