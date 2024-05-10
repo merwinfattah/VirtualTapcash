@@ -95,9 +95,25 @@ public class TapcashCardService {
 
             tapcashCardJpaRepository.save(newCard);
 
-            String message = "Card Successfully Registered";
+            try {
+                // Create ObjectMapper instance
+                ObjectMapper objectMapper = new ObjectMapper();
 
-            return new ApiResponseDto("success", newCard, message);
+                // Create and configure SimpleFilterProvider
+                SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+                filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+
+                // Set the filter provider to the ObjectMapper
+                objectMapper.setFilterProvider(filterProvider);
+
+                // Convert transactions to JSON using the ObjectMapper
+                String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(newCard);
+
+                return new ApiResponseDto("success", cardJson, "Card Successfully Registered");
+            } catch (Exception e) {
+                throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+            }
+
         } else {
             throw new CardNotFoundException("Card Have Not  Registered Yet On BNI System");
         }
@@ -156,9 +172,25 @@ public class TapcashCardService {
 
             tapcashCardJpaRepository.save(newCard);
 
-            String message = "Card Successfully Registered";
+            try {
+                // Create ObjectMapper instance
+                ObjectMapper objectMapper = new ObjectMapper();
 
-            return new ApiResponseDto("success", newCard, message);
+                // Create and configure SimpleFilterProvider
+                SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+                filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+
+                // Set the filter provider to the ObjectMapper
+                objectMapper.setFilterProvider(filterProvider);
+
+                // Convert transactions to JSON using the ObjectMapper
+                String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(newCard);
+
+                return new ApiResponseDto("success", cardJson, "Card Successfully Registered");
+            } catch (Exception e) {
+                throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+            }
+
         } else {
             throw new CardNotFoundException("Card Have Not  Registered Yet On BNI System");
         }
@@ -182,9 +214,9 @@ public class TapcashCardService {
                 objectMapper.setFilterProvider(filterProvider);
 
                 // Convert transactions to JSON using the ObjectMapper
-                String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(cardsData);
+                String cardsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(cardsData);
 
-                JsonNode jsonObject = objectMapper.readTree(transactionsJson);
+                JsonNode jsonObject = objectMapper.readTree(cardsJson);
 
                 return new ApiResponseDto("success", jsonObject, "cards data retrieved successfully");
             } catch (Exception e) {
@@ -212,11 +244,9 @@ public class TapcashCardService {
                 objectMapper.setFilterProvider(filterProvider);
 
                 // Convert transactions to JSON using the ObjectMapper
-                String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(card);
+                String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(card);
 
-                JsonNode jsonObject = objectMapper.readTree(transactionsJson);
-
-                return new ApiResponseDto("success", jsonObject, "card data retrieved successfully");
+                return new ApiResponseDto("success", cardJson, "card data retrieved successfully");
             } catch (Exception e) {
                 throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
             }
@@ -225,15 +255,6 @@ public class TapcashCardService {
         }
     }
 
-    public ApiResponseDto getOneCardExternal(String cardId) throws CardNotFoundException {
-        Optional <ExternalSystemCard> card = externalSystemCardService.getCardById(cardId);
-        if (card.isPresent()) {
-            String message = "card data retrieved successfully";
-            return new ApiResponseDto("success", card, message);
-        } else {
-            throw new CardNotFoundException("No Cards Found for  Tapcash ID: " + cardId);
-        }
-    }
 
 
     public ApiResponseDto updateCard(Long userId, String cardId, String pin) throws BadCredentialException, AccountNotFoundException {
@@ -265,9 +286,24 @@ public class TapcashCardService {
                     }
                 }
 
-                String message = "Card Removed Successfully!";
+                try {
+                    // Create ObjectMapper instance
+                    ObjectMapper objectMapper = new ObjectMapper();
 
-                return new ApiResponseDto("success", updatedCard, message);
+                    // Create and configure SimpleFilterProvider
+                    SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+                    filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+
+                    // Set the filter provider to the ObjectMapper
+                    objectMapper.setFilterProvider(filterProvider);
+
+                    // Convert transactions to JSON using the ObjectMapper
+                    String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(updatedCard);
+
+                    return new ApiResponseDto("success", cardJson, "Card Removed Successfully!");
+                } catch (Exception e) {
+                    throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+                }
             } else {
                 throw  new BadCredentialException("Wrong pin number!");
             }

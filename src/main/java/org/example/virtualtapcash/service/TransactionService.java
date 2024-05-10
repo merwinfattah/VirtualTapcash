@@ -104,7 +104,26 @@ public class TransactionService {
         transaction.setType("PAYMENT");
         transactionJpaRepository.save(transaction);
 
-        return new ApiResponseDto("success", transaction, "Payment successful");
+        try {
+            // Create ObjectMapper instance
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Create and configure SimpleFilterProvider
+            SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+            filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+            filterProvider.addFilter("cardFilter", SimpleBeanPropertyFilter.serializeAllExcept("user.pin", "user.bankAccountBalance", "user.accountNumber"));
+
+            // Set the filter provider to the ObjectMapper
+            objectMapper.setFilterProvider(filterProvider);
+
+            // Convert transactions to JSON using the ObjectMapper
+            String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction);
+
+            return new ApiResponseDto("success", transactionsJson, "Payment successful");
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+        }
+
     }
 
     @Transactional
@@ -167,6 +186,26 @@ public class TransactionService {
         transaction.setType(type);
         transactionJpaRepository.save(transaction);
 
-        return new ApiResponseDto("success", transaction, message);
+
+        try {
+            // Create ObjectMapper instance
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Create and configure SimpleFilterProvider
+            SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+            filterProvider.addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept("pin", "bankAccountBalance", "accountNumber"));
+            filterProvider.addFilter("cardFilter", SimpleBeanPropertyFilter.serializeAllExcept("user.pin", "user.bankAccountBalance", "user.accountNumber"));
+
+            // Set the filter provider to the ObjectMapper
+            objectMapper.setFilterProvider(filterProvider);
+
+            // Convert transactions to JSON using the ObjectMapper
+            String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction);
+
+            return new ApiResponseDto("success", transactionsJson, message);
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
+        }
+
     }
 }
