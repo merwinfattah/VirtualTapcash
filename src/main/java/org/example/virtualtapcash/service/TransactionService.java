@@ -119,7 +119,9 @@ public class TransactionService {
             // Convert transactions to JSON using the ObjectMapper
             String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction);
 
-            return new ApiResponseDto("success", transactionsJson, "Payment successful");
+            JsonNode jsonObject = objectMapper.readTree(transactionsJson);
+
+            return new ApiResponseDto("success", jsonObject, "Payment successful");
         } catch (Exception e) {
             throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
         }
@@ -202,7 +204,9 @@ public class TransactionService {
             // Convert transactions to JSON using the ObjectMapper
             String transactionsJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction);
 
-            return new ApiResponseDto("success", transactionsJson, message);
+            JsonNode jsonObject = objectMapper.readTree(transactionsJson);
+
+            return new ApiResponseDto("success", jsonObject, message);
         } catch (Exception e) {
             throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
         }

@@ -109,7 +109,9 @@ public class TapcashCardService {
                 // Convert transactions to JSON using the ObjectMapper
                 String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(newCard);
 
-                return new ApiResponseDto("success", cardJson, "Card Successfully Registered");
+                JsonNode jsonObject = objectMapper.readTree(cardJson);
+
+                return new ApiResponseDto("success", jsonObject, "Card Successfully Registered");
             } catch (Exception e) {
                 throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
             }
@@ -186,7 +188,9 @@ public class TapcashCardService {
                 // Convert transactions to JSON using the ObjectMapper
                 String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(newCard);
 
-                return new ApiResponseDto("success", cardJson, "Card Successfully Registered");
+                JsonNode jsonObject = objectMapper.readTree(cardJson);
+
+                return new ApiResponseDto("success", jsonObject, "Card Successfully Registered");
             } catch (Exception e) {
                 throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
             }
@@ -246,7 +250,9 @@ public class TapcashCardService {
                 // Convert transactions to JSON using the ObjectMapper
                 String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(card.get());
 
-                return new ApiResponseDto("success", cardJson, "card data retrieved successfully");
+                JsonNode jsonObject = objectMapper.readTree(cardJson);
+
+                return new ApiResponseDto("success", jsonObject, "card data retrieved successfully");
             } catch (Exception e) {
                 throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
             }
@@ -300,7 +306,9 @@ public class TapcashCardService {
                     // Convert transactions to JSON using the ObjectMapper
                     String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(updatedCard);
 
-                    return new ApiResponseDto("success", cardJson, "Card Removed Successfully!");
+                    JsonNode jsonObject = objectMapper.readTree(cardJson);
+
+                    return new ApiResponseDto("success", jsonObject, "Card Removed Successfully!");
                 } catch (Exception e) {
                     throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
                 }
