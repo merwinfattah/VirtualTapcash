@@ -1,5 +1,6 @@
 package org.example.virtualtapcash.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -37,7 +38,9 @@ public class AccountMBankingService {
                 // Convert transactions to JSON using the ObjectMapper
                 String userJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(accountOptional.get());
 
-                return new ApiResponseDto("success", userJson, "User found");
+                JsonNode jsonObject = objectMapper.readTree(userJson);
+
+                return new ApiResponseDto("success", jsonObject, "User found");
             } catch (Exception e) {
                 throw new RuntimeException("Error converting transactions to JSON: " + e.getMessage());
             }

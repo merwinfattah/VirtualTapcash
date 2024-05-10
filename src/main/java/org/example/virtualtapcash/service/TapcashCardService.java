@@ -244,7 +244,7 @@ public class TapcashCardService {
                 objectMapper.setFilterProvider(filterProvider);
 
                 // Convert transactions to JSON using the ObjectMapper
-                String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(card);
+                String cardJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(card.get());
 
                 return new ApiResponseDto("success", cardJson, "card data retrieved successfully");
             } catch (Exception e) {
