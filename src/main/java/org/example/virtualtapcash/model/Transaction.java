@@ -40,5 +40,6 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "cardId", referencedColumnName = "cardId")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonFilter("cardFilter")
     private TapcashCard card;
 }

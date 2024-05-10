@@ -46,5 +46,6 @@ public class TapcashCard {
     @ManyToOne
     @JoinColumn(name = "virtual_tapcash_id", referencedColumnName = "virtual_tapcash_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonFilter("userFilter")
     private MBankingAccount user;
 }
