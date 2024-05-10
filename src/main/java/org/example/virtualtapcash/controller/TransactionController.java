@@ -24,10 +24,10 @@ public class TransactionController {
     @Autowired
     private QrService qrService;
 
-    @GetMapping("/get-transaction-data")
-    public ResponseEntity<ApiResponseDto> getTransactionData(@RequestBody GetTransactionDto request) {
+    @GetMapping("/get-transaction-data/account/{virtualTapcashId}/card/{cardId}")
+    public ResponseEntity<ApiResponseDto> getTransactionData(@PathVariable String virtualTapcashId, @PathVariable String cardId) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransaction(request.getCardId(), request.getVirtualTapcashId()));
+            return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransaction(cardId, virtualTapcashId));
         } catch (CardNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("error", null, e.getMessage()));
         } catch (Exception e) {
